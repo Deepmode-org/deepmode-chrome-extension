@@ -1,6 +1,35 @@
 {
-  "name": "Awakely",
+  "name": "Conscientious",
   "version": "0.1",
   "description": "Stay on task while on the internet",
+  "permissions": ["activeTab", "tabs", "storage"],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "background": {
+    "scripts": ["helpers/extractDomain.js", "content_scripts/textParamHandlers.js", "api/api.js", "background/background.js", "background/updateTask.js"],
+    "persistent": true
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["content_scripts/styles.css"],
+      "js": ["helpers/extractDomain.js", "content_scripts/siteAugmentationHandlers.js", "content_scripts/textParamHandlers.js", "api/api.js", "content_scripts/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "images/icon_16.png",
+      "32": "images/icon_32.png",
+      "48": "images/icon_48.png",
+      "128": "images/icon_128.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon_16.png",
+    "32": "images/icon_32.png",
+    "48": "images/icon_48.png",
+    "128": "images/icon_128.png"
+  },
   "manifest_version": 2
 }

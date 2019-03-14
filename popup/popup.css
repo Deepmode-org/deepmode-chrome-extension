@@ -1,0 +1,49 @@
+#set-task {
+  display: flex;
+  flex-direction: column;
+  min-height: 300px;
+  min-width: 300px;
+  padding: 10px;
+}
+
+#set-task input {
+  border: 1px solid #ddd;
+  border-radius: 2.5px;
+  padding: 2.5px;
+}
+
+#categories p {
+
+}
+
+#categories ul {
+  align-items: items;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+#set-task .category-tag {
+  align-items: center;
+  background: rgba(0, 0, 255, 0.3);
+  border-radius: 2.5px;
+  display: flex;
+  font-size: 10px;
+  justify-content: space-between;
+  margin: 2.5px;
+  padding: 5px;
+}
+
+.category-tag .remove {
+  cursor: pointer;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+#set-task button {
+  margin-top: 10px;
+}
+
+#hits .ais-Hits-list {
+  list-style: none;
+}

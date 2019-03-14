@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="./popup.css">
+</head>
+<body>
+  <div id="set-task">
+    <p>Set the current task</p>
+    <input
+      v-model="currentTaskDescription"
+      type="text"
+      name="task"
+      placeholder="Eat a frog...">
+    <div id="categories">
+      <p>Edit Categories:</p>
+      <div v-if="categoriesLoading">
+        Loading...
+      </div>
+      <ul v-if="!categoriesLoading">
+        <li class="category-tag" v-for="(category, i) in currentTaskCategories">
+          <span>{{ category }}</span>
+          <span v-on:click="removeCategory(i)" class="remove">x</span>
+        </li>
+      </ul>
+    </div>
+    <button v-on:click="setTask">Set Task</button>
+  </div>
+  <script src="../dependencies/algoliasearch.js"></script>
+  <script src="../dependencies/instantsearch.js"></script>
+  <script src="../dependencies/vue.js"></script>
+  <script src="./api.js"></script>
+  <script src="./popup.js"></script>  
+</body>
+</html>
