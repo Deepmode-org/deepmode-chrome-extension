@@ -2,7 +2,7 @@
   "name": "Conscientious",
   "version": "0.1",
   "description": "Stay on task while on the internet",
-  "permissions": ["activeTab", "tabs", "storage"],
+  "permissions": ["identity", "activeTab", "tabs", "storage"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {
     "scripts": ["helpers/extractDomain.js", "content_scripts/textParamHandlers.js", "api/api.js", "background/background.js", "background/updateTask.js"],
