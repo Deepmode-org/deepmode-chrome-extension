@@ -1,7 +1,6 @@
 chrome.runtime.onMessage.addListener(function(msg) {
   if (msg.type === "close_current_tab") {
     chrome.tabs.query({ active: true }, function(tabs) {
-      console.log(tabs)
       if (tabs.length)
         return chrome.tabs.remove(tabs[0].id);
     });
@@ -23,6 +22,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       if (blockedSites.includes(url)) {
         return chrome.tabs.sendMessage(tabId, { type: "topic_match", match: false });
       }
+
+      // console.log(url, domainName)
       
       if (categories.length > 0) {
         // Handle special cases of sites by extracting text

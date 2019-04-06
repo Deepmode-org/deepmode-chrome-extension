@@ -1,7 +1,7 @@
 {
-  "name": "Conscientious",
+  "name": "Deep Mode",
   "version": "0.1",
-  "description": "Stay on task while on the internet",
+  "description": "Stay on task, online",
   "permissions": ["identity", "activeTab", "tabs", "storage"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "background": {
@@ -11,9 +11,15 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "css": ["content_scripts/styles.css"],
-      "js": ["helpers/extractDomain.js", "content_scripts/siteAugmentationHandlers.js", "content_scripts/textParamHandlers.js", "api/api.js", "content_scripts/content.js"],
+      "css": [],
+      "js": ["helpers/extractDomain.js", "content_scripts/textParamHandlers.js", "api/api.js", "content_scripts/content.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "css": ["content_scripts/styles.css"],
+      "js": ["api/api.js", "content_scripts/siteAugmentationHandlers.js", "content_scripts/youtube.js", "content_scripts/stackexchange.js", "content_scripts/quora.js", "content_scripts/articleParse.js", "content_scripts/twitter.js"],
+      "run_at": "document_start"
     }
   ],
   "browser_action": {
@@ -31,5 +37,13 @@
     "48": "images/icon_48.png",
     "128": "images/icon_128.png"
   },
+  "oauth2": {
+    "client_id": "471502441995-vojtv32sakhrounlkk13np20cknr9pr2.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+wl4vVh6FcFsrIWT33ikGjC5jmUvvJjBqkVRweRocyIsTOh/e/KC9XUDGjrvIK7qv0JlhsHyVxehVSepBQSViSNWGcEtGWqQ/Ak4pwZg11ih/J9FM/4bwcUhB0bv8bA21McLWOt2G5WmcjaJw5hsco+HcuCzz3Tw8YCmqk7K4vlHiMCwSdjunvKKa162dGsIIx+qxNjpCEM1v0eO/cCnu2smHjIzwPTHNFkYWU0GLXZ79HV5rmBW52qJyNULBhRD1xw470UTFV04h0nV5N5Y1lANzvzhSQNDUk8eOptdemM15cCGSOpMS+sFAw2wG+Q5SkTU8mWiQh0tA0JqMbf9wIDAQAB",
   "manifest_version": 2
 }

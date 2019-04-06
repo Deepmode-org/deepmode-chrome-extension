@@ -5,20 +5,22 @@
 */
 
 function handleYouTube() {
-  // Just use the video title and description instead of the full page
-  var title = document.querySelector("h1.title").textContent.trim();
-  var description = document.getElementById("description").textContent.trim();
+  if (window.location.pathname === "/watch") {
+    // Just use the video title and description instead of the full page
+    var title = document.querySelector("h1.title").textContent.trim();
+    var description = document.getElementById("description").textContent.trim();
 
-  return title + "\n" + description;
+    return title + "\n" + description;
+  }
 }
 
 var textParamHandlers = {
   ["youtube"]: handleYouTube,
 };
 
-// Run site specific code after DOM has loaded
-Object.values(textParamHandlers).forEach(function(fn) {
-  fn = function() {
-    return document.addEventListener("DOMContentLoaded", fn);
-  }
-});
+// // Run site specific code after DOM has loaded
+// Object.values(textParamHandlers).forEach(function(fn) {
+//   fn = function() {
+//     return document.addEventListener("DOMContentLoaded", fn);
+//   }
+// });

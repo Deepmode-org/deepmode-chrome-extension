@@ -1,7 +1,7 @@
-#ctious-overlay {
+#deepmode-overlay {
   align-items: center;
   background: white;
-  color: #333;
+  color: #3d424e;
   display: flex;
   flex-direction: column;
   font-size: 14px;
@@ -14,26 +14,186 @@
   z-index: 2147483647;
 }
 
-#ctious-task-btns {
+#deepmode-task-btns {
   align-items: center;
   display: flex;
   justify-content: space-around;
   width: 300px;
 }
 
-#ctious-on-task-yes,
-#ctious-on-task-no {
-  border: 1px solid #333;
+#deepmode-on-task-yes,
+#deepmode-on-task-no {
+  border: 1px solid #3d424e;
   border-radius: 2.5px;
   height: 35px;
   text-align: center;
   width: 100px;
 }
 
-#ctious-on-task-yes {
+#deepmode-on-task-yes {
   background: #3498db;
 }
 
-#ctious-on-task-no {
+#deepmode-on-task-no {
   background: #e74c3c;
+}
+
+/*
+  Styling for focused article mode
+*/
+
+#deepmode-prepare {
+  align-items: center;
+  background: white;
+  color: #485460;
+  display: flex;
+  font-family: "Source Serif Pro", serif;
+  font-size: 24px;
+  justify-content: center;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2147483647;
+}
+
+#deepmode-cancel-article-view {
+  color: #bbb;
+  cursor: pointer;
+  font-family: "Source Code Pro", monospace;
+  font-size: 16px;
+  position: fixed;
+  right: 2.5%;
+  top: 10px;
+  z-index: 2147483646;
+}
+
+#deepmode-article-wrapper {
+  background: white;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 2147483645;
+}
+
+#deepmode-article-wrapper * {
+  font-family: "Source Serif Pro", serif;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+#deepmode-article-wrapper > * {
+  margin-bottom: 30px;
+}
+
+#deepmode-article-wrapper > main {
+  color: #485460;
+  font-family: "Source Serif Pro", serif;
+  font-size: 16px;
+  max-width: 600px;
+  margin: 30px auto 60px;
+  width: calc(100% - 45px);
+}
+
+#deepmode-article-wrapper *::selection {
+  background-color: #222;
+  color: white;
+}
+
+#deepmode-article-wrapper h1,
+#deepmode-article-wrapper h2,
+#deepmode-article-wrapper h3,
+#deepmode-article-wrapper h4,
+#deepmode-article-wrapper h5,
+#deepmode-article-wrapper h6 {
+  color: #3d424e;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: bold;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+#deepmode-article-wrapper h1 {
+  font-size: 32px;
+}
+
+#deepmode-article-wrapper h2 {
+  font-size: 24px;
+}
+
+#deepmode-article-wrapper p, #deepmode-article-wrapper span {
+  font-family: "Source Serif Pro", serif;
+  font-size: 18px;
+  line-height: 1.58;
+  margin-bottom: 30px;
+  padding: 0px;
+}
+
+#deepmode-article-wrapper a {
+  color: #302ecd;
+}
+
+#deepmode-article-wrapper a:visited {
+  color: #487eb0;
+}
+
+#deepmode-article-wrapper a:focus,
+#deepmode-article-wrapper a:hover,
+#deepmode-article-wrapper a:active,
+#deepmode-article-wrapper a.active {
+  color: #302ecd;
+  text-decoration: underline;
+}
+
+#deepmode-article-wrapper ul {
+  font-size: 18px;
+  list-style-type: disc;
+  margin-bottom: 20px;
+}
+
+#deepmode-article-wrapper li {
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+#deepmode-article-wrapper figcaption {
+  font-size: 14px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+#deepmode-article-wrapper img,
+#deepmode-article-wrapper video,
+#deepmode-article-wrapper source {
+  margin: 15px auto;
+  max-width: 100%;
+  width: auto;
+}
+
+#deepmode-article-wrapper pre {
+  margin: 1.64em 0;
+  padding: 7px;
+  border: none;
+  border-left: 3px solid #dadada;
+  padding-left: 10px;
+  overflow: auto;
+  line-height: 1.5;
+  font-size: 12px;
+  font-family: "Source Code Pro", monospace;
+  color: #555;
+  background-color: #f9f9f7;
+}
+
+#deepmode-article-wrapper code {
+  color: #555;
+  font-size: 12px;
+  background-color: #f9f9f7;
+  padding: 1px 2px;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  font-family: "Source Code Pro", monospace;
+  word-wrap: break-word;
 }

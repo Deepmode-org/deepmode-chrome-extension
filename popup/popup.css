@@ -1,15 +1,60 @@
+body {
+  height: 400px;
+  width: 350px;
+}
+
+header {
+  align-items: center;
+  background: #fff;
+  border-bottom: 0.1rem solid #ddd;
+  display: flex;
+  /*height: 45px;*/
+  justify-content: space-between;
+  padding: 5px 10px;
+  width: 100%;
+}
+
+#options {
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+}
+
+.brand-icon {
+  align-items: center;
+  /*background: white;*/
+  /*border-radius: 100%;*/
+  display: flex;
+  justify-content: space-around;
+  /*height: 30px;*/
+  /*width: 30px;*/
+}
+
+.brand-icon span {
+  margin-left: 0.2rem;
+}
+
 #set-task {
   display: flex;
   flex-direction: column;
+  font-size: 12px;
   min-height: 300px;
   min-width: 300px;
   padding: 10px;
+}
+
+#set-task h2 {
+  font-weight: bold;
 }
 
 #set-task input {
   border: 1px solid #ddd;
   border-radius: 2.5px;
   padding: 2.5px;
+}
+
+#task-description {
+  margin-bottom: 1rem;
 }
 
 #categories p {
@@ -21,8 +66,15 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  list-style: none;
 }
 
+#categories .chip {
+  background: rgba(95,39,205,0.1);
+  font-size: 12px;
+}
+
+/*
 #set-task .category-tag {
   align-items: center;
   background: rgba(0, 0, 255, 0.3);
@@ -39,7 +91,7 @@
   font-weight: bold;
   margin-left: 5px;
 }
-
+*/
 #set-task button {
   margin-top: 10px;
 }

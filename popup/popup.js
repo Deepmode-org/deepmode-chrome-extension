@@ -1,6 +1,7 @@
 var vm = new Vue({
-  el: "#set-task",
+  el: "#content",
   data: {
+    user: true,
     currentTaskDescription: "",
     currentTaskCategories: [],
     categoriesLoading: false
@@ -9,9 +10,10 @@ var vm = new Vue({
   created: function() {
     var that = this;
     this.categoriesLoading = false;
-    chrome.storage.sync.get(["currentTaskDescription", "currentTaskCategories"], function(obj) {
+    chrome.storage.sync.get(["currentTaskDescription", "currentTaskCategories", "deepmodeUser"], function(obj) {
       that.currentTaskDescription = obj.currentTaskDescription;
       that.currentTaskCategories = obj.currentTaskCategories;
+      that.user = obj.deepmodeUser = true;
     });
   },
 
