@@ -1,0 +1,109 @@
+.OnTask {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1rem 0.5rem;
+
+  .current-task {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    div {
+      h6 {
+        color: #999;
+        font-size: 0.6rem;
+        text-transform: uppercase;
+      }
+    }
+
+    button {
+      * {
+        margin: 0 0.1rem;
+      }
+    }
+  }
+
+  .loading {
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+
+  .categories {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 1rem auto;
+
+    .category {
+      font-size: 13px;
+      margin: 0.2rem;
+
+      svg {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .category-search {
+    margin-bottom: 1rem;
+    padding: 0 1rem;
+    width: 100%;
+
+    .ais-SearchBox {
+      button {
+        display: none;
+      }
+
+      .ais-SearchBox-input {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: #fff;
+        background-image: none;
+        border: .05rem solid #bcc3ce;
+        border-radius: .1rem;
+        color: #3b4351;
+        display: block;
+        font-size: .7rem;
+        height: 1.8rem;
+        line-height: 1.2rem;
+        max-width: 100%;
+        outline: none;
+        padding: .25rem .4rem;
+        position: relative;
+        transition: background .2s, border .2s, box-shadow .2s, color .2s;
+        width: 100%;
+      
+        &:focus {
+          border-color: #487eb0; 
+          box-shadow: 0 0 0 .1rem rgba(87, 85, 217, .2);
+        }
+      }
+    }
+
+    .ais-Hits {
+      font-size: 13px;
+      max-height: 100px;
+      overflow-y: scroll;
+
+      .ais-Hits-item {
+        cursor: pointer;
+        padding: 0.3rem;
+        
+        &:hover {
+          background: rgba(95, 39, 205, 0.2);
+        }
+
+        .hit-text {
+          align-items: center;
+          display: flex;
+          justify-content: space-between;
+          margin: 0;
+        }
+      }
+    }
+  }
+}

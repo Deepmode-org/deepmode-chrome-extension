@@ -1,0 +1,7 @@
+#deepmode-root {
+  @import "reset";
+  @import "spectre";
+  @import "./components/components.scss";
+
+  display: none;
+}

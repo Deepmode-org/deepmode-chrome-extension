@@ -1,0 +1,43 @@
+.SetTask {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1rem 0.5rem;
+
+  input {
+    margin-bottom: .5rem;
+  }
+
+  .new-task, .previous-tasks {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .previous-tasks {
+    margin-top: 2rem;
+
+    ul {
+      list-style: none;
+      width: 100%;
+
+      .previous-task {
+        align-items: center;
+        border-bottom: 0.05rem solid #ddd;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        padding: 0.1rem 1rem;
+
+        &:hover {
+          font-weight: bold;
+
+          svg {
+            font-size: 45px;
+          }
+        }
+      }
+    }
+  }
+}

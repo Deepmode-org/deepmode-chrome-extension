@@ -1,0 +1,13 @@
+.PopupHeader {
+  align-items: center;
+  border-bottom: 0.05rem solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  width: 100%;
+
+  svg {
+    color: #5F27CD;
+    cursor: pointer;
+  }
+}
