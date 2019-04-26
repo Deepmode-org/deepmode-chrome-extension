@@ -8,11 +8,26 @@ import { InstantSearch, SearchBox, Hits, Highlight } from "react-instantsearch-d
 const searchClient = algoliasearch("6O063WLG3P", "0ceddc9c53f947e466efa25e923164fe");
 
 class Hit extends React.Component {
+  constructor(props) {
+    super(props);
+    this.addCategory = this.addCategory.bind(this);
+  }
+
+  addCategory(newCategory) {
+    const { taskDescription, categories, updateTaskCategories, addRecentTask } = this.props;
+    const updatedCategories = categories.concat(newCategory);
+    addRecentTask({
+      description: taskDescription,
+      categories: updatedCategories
+    });
+    return updateTaskCategories(updatedCategories);
+  }
+
   render() {
-    const { hit, categories, updateTaskCategories } = this.props;
+    const { hit } = this.props;
     const { category } = hit.hit;
     return (
-      <div className="hit-text" onMouseDown={updateTaskCategories.bind(this, (categories.concat(category)))}>
+      <div className="hit-text" onMouseDown={(e) => this.addCategory(category)}>
         { category }
         <span><IoIosPlusEmpty /> Add</span>
       </div>
@@ -30,8 +45,10 @@ class OnTask extends React.Component {
   }
 
   removeCategory(i) {
-    const categories = this.props.currentTaskCategories.filter((category, j) => j !== i);
-    return this.props.updateTaskCategories(categories);
+    const { currentTaskCategories, updateTaskCategories, currentTaskDescription, addRecentTask } = this.props;
+    const categories = currentTaskCategories.filter((category, j) => j !== i);
+    addRecentTask({ description: currentTaskDescription, categories });
+    return updateTaskCategories(categories);
   }
 
   render() {
@@ -40,14 +57,17 @@ class OnTask extends React.Component {
       currentTaskCategories,
       updateRoute,
       updateTaskCategories,
-      categoriesLoading
+      categoriesLoading,
+      addRecentTask
     } = this.props;
+
     const categories = currentTaskCategories.map((category, i) =>
       <div key={i} className="category chip">
         {category}
         <IoIosCloseEmpty onClick={this.removeCategory.bind(this, i)} size="20" color="#e74c3c" />
       </div>
     );
+
     const hitsClass = this.state.searchFocused ? "show" : "d-none";
 
     return (
@@ -80,7 +100,11 @@ class OnTask extends React.Component {
                 <Hit
                   hit={hit}
                   categories={currentTaskCategories}
-                  updateTaskCategories={updateTaskCategories} /> } />
+                  updateTaskCategories={updateTaskCategories}
+                  taskDescription={currentTaskDescription}
+                  addRecentTask={addRecentTask} />
+              }
+            />
           </InstantSearch>
         </div>
         <p className="text-center text-small">

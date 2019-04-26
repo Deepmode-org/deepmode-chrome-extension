@@ -1,6 +1,6 @@
 {
-  "name": "Deep Mode",
-  "version": "0.1",
+  "name": "Deepmode - Intelligent website blocker",
+  "version": "0.11",
   "description": "Stay on task, online",
   "permissions": ["identity", "activeTab", "tabs", "storage"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
@@ -12,7 +12,7 @@
     {
       "matches": ["<all_urls>"],
       "js": ["dist/content_scripts/index.js"],
-      "run_at": "document_idle"
+      "run_at": "document_start"
     }
   ],
   "web_accessible_resources": ["dist/content_scripts/index.css"],

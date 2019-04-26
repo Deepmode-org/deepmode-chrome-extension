@@ -3,7 +3,7 @@ import { closeCurrentTab } from "../content_scripts/messaging.js"
 
 class DistractionBlock extends React.Component {
   render() {
-    const { taskDescription, updateBlockMap } = this.props;
+    const { taskDescription } = this.props;
     return (
       <div className="DistractionBlock">
         <div className="container grid-sm">
@@ -26,7 +26,7 @@ class DistractionBlock extends React.Component {
           </div>
           <div className="options columns">
             <div className="column">
-              <button onClick={updateBlockMap.bind(this, "none")} className="allow-tab btn">
+              <button className="allow-tab btn">
                 Yes, continue
               </button>
               <button onClick={closeCurrentTab} className="close-tab btn btn-success">

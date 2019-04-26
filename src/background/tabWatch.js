@@ -1,10 +1,13 @@
 import store from "./store.js";
 import Mercury from "@postlight/mercury-parser";
 import { checkMatch } from "../api/api.js";
-import { updateBlockMap } from "../actions/";
 import extractDomainNameWithoutTLD from "../helpers/extractDomain";
 
 let isFirstLoad = true;
+
+function noMatch(tabId) {
+  chrome.tabs.sendMessage(tabId, { type: "topic_match", match: false });
+}
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   let { taskCategories, elem, blacklist, isPaused } = store.getState();
@@ -22,7 +25,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       
     // No need to call API for known blocked sites
     if (blacklist.includes(url))
-      return chrome.tabs.sendMessage(tabId, { type: "topic_match", match: false });
+      return noMatch(tabId);
     
     if (taskCategories.length > 0) {
       return Mercury.parse(url).then(function(result) {
@@ -30,7 +33,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         checkMatch(taskCategories, null, payload).then(function(isMatch) {
           // Send the match result to the content script
           if (!isMatch)
-            chrome.tabs.sendMessage(tabId, { type: "topic_match", match: false })
+            return noMatch(tabId);
         });
       });
     }

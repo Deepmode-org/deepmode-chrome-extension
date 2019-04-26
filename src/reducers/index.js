@@ -2,19 +2,21 @@ import { combineReducers } from "redux";
 import taskDescription from "./taskDescription";
 import taskCategories from "./taskCategories";
 import route from "./route";
-import blockMap from "./blockMap";
 import blacklist from "./blacklist";
 import categoriesLoading from "./categoriesLoading";
 import isPaused from "./isPaused";
+import protagonist from "./protagonist";
+import recentTasks from "./recentTasks";
 
 const deepmodeApp = combineReducers({
-  blockMap,
   taskDescription,
   taskCategories,
   route,
   blacklist,
   categoriesLoading,
-  isPaused
+  isPaused,
+  protagonist,
+  recentTasks
 });
 
 export default deepmodeApp;

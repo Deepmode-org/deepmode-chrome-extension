@@ -1,5 +1,6 @@
 import React from "react";
 import PopupHeaderContainer from "../containers/PopupHeaderContainer";
+import AuthContainer from "../containers/AuthContainer";
 import SetTaskContainer from "../containers/SetTaskContainer";
 import OnTaskContainer from "../containers/OnTaskContainer";
 
@@ -11,9 +12,11 @@ class Popup extends React.Component {
   }
 
   render() {
-    const { route } = this.props;
+    const { route, protagonist } = this.props;
     let result = null;
-    if (route === "/")
+    if (!protagonist)
+      result = <AuthContainer />;
+    else if (route === "/")
       result = <SetTaskContainer />;
     else if (route === "/task")
       result = <OnTaskContainer />;

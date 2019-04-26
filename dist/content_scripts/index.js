@@ -189,7 +189,230 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"content_scripts/showBlock.js":[function(require,module,exports) {
+},{"_css_loader":"../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"content_scripts/augment.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = augment;
+
+// This watches elements and hides them when they appear - it is less performant but can prevent a delay
+// or a miss in hiding an element
+// This should be used by default since the content script runs at document start
+// The observer should be attached to document.documentElement
+function augment() {
+  var conditions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var delay = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  var watchAttr = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+  function deleteNodes(nodes) {
+    [].forEach.call(nodes, function (node) {
+      node.remove();
+    });
+  }
+
+  if (conditions && conditions.length) {
+    // Use mutation observers to handle elements that are dynamically loaded
+    var mo = new MutationObserver(processNodes);
+    mo.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: watchAttr
+    });
+    if (!delay) document.addEventListener("DOMContentLoaded", function (e) {
+      return mo.disconnect();
+    });
+  }
+
+  function processNodes(mutations) {
+    for (var i = 0; i < mutations.length; i++) {
+      var nodes = mutations[i].addedNodes;
+
+      for (var j = 0; j < nodes.length; j++) {
+        var node = nodes[j];
+        if (node.nodeType !== 1) continue;
+
+        for (var k = 0; k < conditions.length; k++) {
+          var condition = conditions[k];
+
+          if (!condition.pathname || condition.pathname === window.location.pathname) {
+            if (node.matches(condition.selector)) {
+              if (condition.callback === "hide") {
+                if (!delay) deleteNodes([node]);else hidePoll(condition);
+              }
+            } else {
+              if (condition.callback === "hide") {
+                deleteNodes(node.querySelectorAll(condition.selector));
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  function hidePoll(condition) {
+    var interval = setInterval(function () {
+      if (document.querySelector(condition.selector)) {
+        document.querySelector(condition.selector).setAttribute("style", "visibility: hidden !important");
+        setTimeout(function () {
+          clearInterval(interval);
+        }, 5000);
+      }
+    }, 100);
+  }
+}
+},{}],"content_scripts/augmentationConditions.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+var augmentationConditions = {
+  "stackexchange": [{
+    "selector": ".module.community-bulletin",
+    "callback": "hide"
+  }, {
+    "selector": "#clc-tsb.everyonelovesstackoverflow.everyoneloves__top-sidebar",
+    "callback": "hide"
+  }, {
+    "selector": "#hireme",
+    "callback": "hide"
+  }, {
+    "selector": ".module.sidebar-linked",
+    "callback": "hide"
+  }, {
+    "selector": "#hot-network-questions.module.tex2jax_ignore",
+    "callback": "hide"
+  }, {
+    "selector": "#feed-link",
+    "callback": "hide"
+  }],
+  "youtube": [{
+    selector: "#page-manager",
+    callback: "hide",
+    pathname: "/",
+    undo: function undo() {
+      var _this = this;
+
+      var elementToHideCheck = setInterval(function () {
+        if (document.querySelector(_this.selector)) {
+          document.querySelector(_this.selector).setAttribute("style", "");
+          setTimeout(function () {
+            clearInterval(elementToHideCheck);
+          }, 2000);
+        }
+      }, 100);
+    }
+  }, {
+    selector: "#guide-content",
+    callback: "hide"
+  }, {
+    selector: "#logo",
+    callback: "hide"
+  }, {
+    selector: "#comments",
+    callback: "hide"
+  }, {
+    selector: "#related",
+    callback: "hide"
+  }, {
+    selector: "#playlist",
+    callback: "hide"
+  }, {
+    selector: "#top-level-buttons",
+    callback: "hide"
+  }, {
+    selector: "#guide-button",
+    callback: "hide"
+  }, {
+    selector: "#end",
+    callback: "hide"
+  }, {
+    selector: ".ytp-next-button",
+    callback: "hide"
+  }, {
+    selector: ".videowall-endscreen",
+    callback: "hide"
+  }, {
+    selector: "#sentiment",
+    callback: "hide"
+  }],
+  "quora": [{
+    "selector": ".FeedMain",
+    "callback": "hide",
+    pathname: "/"
+  }, {
+    "selector": ".NotifsNavItem",
+    "callback": "hide"
+  }, {
+    selector: ".RelatedQuestions",
+    callback: "hide"
+  }, {
+    selector: ".ContentPageFeed",
+    callback: "hide"
+  }],
+  "hackernews": [{
+    selector: ".subtext",
+    callback: "hide"
+  }]
+};
+var _default = augmentationConditions;
+exports.default = _default;
+},{}],"helpers/extractDomain.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = extractDomainNameWithoutTLD;
+
+function extractDomainNameWithoutTLD(url) {
+  return url.split("//")[1].replace("www.", "").split(".").slice(-2, -1)[0];
+}
+},{}],"content_scripts/siteSpecifics.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateUI = updateUI;
+
+var _augment = _interopRequireDefault(require("./augment.js"));
+
+var _augmentationConditions = _interopRequireDefault(require("./augmentationConditions.js"));
+
+var _extractDomain = _interopRequireDefault(require("../helpers/extractDomain.js"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*
+  Code to change specific sites to remove distracting features
+*/
+function updateUI(url) {
+  var domain = (0, _extractDomain.default)(url);
+
+  switch (domain) {
+    case "stackoverflow":
+    case "stackexchange":
+      return (0, _augment.default)(_augmentationConditions.default["stackexchange"]);
+
+    case "youtube":
+      return (0, _augment.default)(_augmentationConditions.default["youtube"], true);
+    // case "ycombinator":
+    //   if (url.includes("news.ycombinator"))
+    //     return augment(augmentationConditions["hackernews"]);
+
+    case "quora":
+      return (0, _augment.default)(_augmentationConditions.default["quora"]);
+
+    default:
+      return;
+  }
+}
+},{"./augment.js":"content_scripts/augment.js","./augmentationConditions.js":"content_scripts/augmentationConditions.js","../helpers/extractDomain.js":"helpers/extractDomain.js"}],"content_scripts/showBlock.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1802,6 +2025,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 require("../styles/content_scripts.scss");
 
+var _siteSpecifics = require("./siteSpecifics.js");
+
 var _messaging = require("./messaging.js");
 
 var _bodyReady = _interopRequireDefault(require("./bodyReady.js"));
@@ -1827,11 +2052,19 @@ Promise.all([(0, _bodyReady.default)(document), store.ready()]).then(function (a
 
   var deepmodeRoot = document.createElement("div");
   deepmodeRoot.id = "deepmode-root";
-  body.appendChild(deepmodeRoot);
+  body.appendChild(deepmodeRoot); // Insert CSS for distraction block
+
+  var cssFile = chrome.runtime.getURL("dist/content_scripts/index.css");
+  var styleLink = document.createElement("link");
+  styleLink.rel = "stylesheet";
+  styleLink.type = "text/css";
+  styleLink.href = cssFile;
+  document.getElementsByTagName("head")[0].appendChild(styleLink);
   (0, _messaging.onTopicMismatch)(store);
 }); // Update UI of certain distracting sites
-// updateUI(window.location.href);
-},{"../styles/content_scripts.scss":"styles/content_scripts.scss","./messaging.js":"content_scripts/messaging.js","./bodyReady.js":"content_scripts/bodyReady.js","webext-redux":"../node_modules/webext-redux/lib/index.js"}],"../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+
+(0, _siteSpecifics.updateUI)(window.location.href);
+},{"../styles/content_scripts.scss":"styles/content_scripts.scss","./siteSpecifics.js":"content_scripts/siteSpecifics.js","./messaging.js":"content_scripts/messaging.js","./bodyReady.js":"content_scripts/bodyReady.js","webext-redux":"../node_modules/webext-redux/lib/index.js"}],"../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -1859,7 +2092,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35781" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34347" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

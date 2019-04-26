@@ -62,3 +62,19 @@ export function analysePageOutline(url) {
     `https://outlineapi.com/v3/parse_article?source_url=${url}`
   );
 }
+
+export function onAuth(protagonist) {
+  return makeRequest(
+    "POST",
+    "https://deepmode-api.herokuapp.com/auth",
+    protagonist
+  );
+}
+
+export function addRecentTask(protagonistID, description, categories) {
+  return makeRequest(
+    "POST",
+    "https://deepmode-api.herokuapp.com/task",
+    { protagonistID, description, categories }
+  );
+}

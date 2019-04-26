@@ -1,5 +1,5 @@
 import "../styles/content_scripts.scss";
-// import { updateUI } from "./siteSpecifics.js";
+import { updateUI } from "./siteSpecifics.js";
 import { onTopicMismatch } from "./messaging.js";
 import bodyReady from "./bodyReady.js";
 import { Store } from "webext-redux";
@@ -14,8 +14,16 @@ Promise.all([bodyReady(document), store.ready()]).then(function(arr) {
   deepmodeRoot.id = "deepmode-root";
   body.appendChild(deepmodeRoot);
 
+  // Insert CSS for distraction block
+  let cssFile = chrome.runtime.getURL("dist/content_scripts/index.css");
+  let styleLink = document.createElement("link");
+  styleLink.rel = "stylesheet";
+  styleLink.type = "text/css";
+  styleLink.href = cssFile;
+  document.getElementsByTagName("head")[0].appendChild(styleLink);
+
   onTopicMismatch(store);
 });
 
 // Update UI of certain distracting sites
-// updateUI(window.location.href);
+updateUI(window.location.href);

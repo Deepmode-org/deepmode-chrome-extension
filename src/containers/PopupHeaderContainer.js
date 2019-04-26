@@ -4,7 +4,8 @@ import PopupHeader from '../components/PopupHeader';
 
 const mapStateToProps = (state) => {
   return {
-    isPaused: state.isPaused
+    isPaused: state.isPaused,
+    protagonist: state.protagonist
   };
 }
 

@@ -28617,6 +28617,8 @@ exports.getCategorySetForTask = getCategorySetForTask;
 exports.parseArticle = parseArticle;
 exports.analysePage = analysePage;
 exports.analysePageOutline = analysePageOutline;
+exports.onAuth = onAuth;
+exports.addRecentTask = addRecentTask;
 
 function makeRequest(type, uri, data) {
   return new Promise(function (resolve, reject) {
@@ -28666,6 +28668,18 @@ function analysePage(url) {
 function analysePageOutline(url) {
   return makeRequest("GET", "https://outlineapi.com/v3/parse_article?source_url=".concat(url));
 }
+
+function onAuth(protagonist) {
+  return makeRequest("POST", "https://deepmode-api.herokuapp.com/auth", protagonist);
+}
+
+function addRecentTask(protagonistID, description, categories) {
+  return makeRequest("POST", "https://deepmode-api.herokuapp.com/task", {
+    protagonistID: protagonistID,
+    description: description,
+    categories: categories
+  });
+}
 },{}],"actions/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -28676,12 +28690,15 @@ exports.updateTaskDescription = updateTaskDescription;
 exports.updateTaskCategories = updateTaskCategories;
 exports.setTask = setTask;
 exports.updateRoute = updateRoute;
-exports.updateBlockMap = updateBlockMap;
 exports.addToBlacklist = addToBlacklist;
 exports.updateCategoriesLoading = updateCategoriesLoading;
 exports.pause = pause;
 exports.play = play;
-exports.PLAY = exports.PAUSE = exports.UPDATE_CATEGORIES_LOADING = exports.ADD_TO_BLACKLIST = exports.UPDATE_BLOCK_MAP = exports.UPDATE_ROUTE = exports.SET_TASK = exports.UPDATE_TASK_CATEGORIES = exports.UPDATE_TASK_DESCRIPTION = void 0;
+exports.onAuth = onAuth;
+exports.setProtagonist = setProtagonist;
+exports.setRecentTasks = setRecentTasks;
+exports.addRecentTask = addRecentTask;
+exports.ADD_RECENT_TASK = exports.SET_RECENT_TASKS = exports.ON_AUTH = exports.SET_PROTAGONIST = exports.PLAY = exports.PAUSE = exports.UPDATE_CATEGORIES_LOADING = exports.ADD_TO_BLACKLIST = exports.UPDATE_ROUTE = exports.SET_TASK = exports.UPDATE_TASK_CATEGORIES = exports.UPDATE_TASK_DESCRIPTION = void 0;
 
 var api = _interopRequireWildcard(require("../api/api.js"));
 
@@ -28695,8 +28712,6 @@ var SET_TASK = "SET_TASK";
 exports.SET_TASK = SET_TASK;
 var UPDATE_ROUTE = "UPDATE_ROUTE";
 exports.UPDATE_ROUTE = UPDATE_ROUTE;
-var UPDATE_BLOCK_MAP = "UPDATE_BLOCK_MAP";
-exports.UPDATE_BLOCK_MAP = UPDATE_BLOCK_MAP;
 var ADD_TO_BLACKLIST = "ADD_TO_BLACKLIST";
 exports.ADD_TO_BLACKLIST = ADD_TO_BLACKLIST;
 var UPDATE_CATEGORIES_LOADING = "UPDATE_CATEGORIES_LOADING";
@@ -28705,6 +28720,14 @@ var PAUSE = "PAUSE";
 exports.PAUSE = PAUSE;
 var PLAY = "PLAY";
 exports.PLAY = PLAY;
+var SET_PROTAGONIST = "SET_PROTAGONIST";
+exports.SET_PROTAGONIST = SET_PROTAGONIST;
+var ON_AUTH = "ON_AUTH";
+exports.ON_AUTH = ON_AUTH;
+var SET_RECENT_TASKS = "SET_RECENT_TASKS";
+exports.SET_RECENT_TASKS = SET_RECENT_TASKS;
+var ADD_RECENT_TASK = "ADD_RECENT_TASK";
+exports.ADD_RECENT_TASK = ADD_RECENT_TASK;
 
 function updateTaskDescription(description) {
   return {
@@ -28734,13 +28757,6 @@ function updateRoute(route) {
   };
 }
 
-function updateBlockMap(blockMap) {
-  return {
-    type: UPDATE_BLOCK_MAP,
-    blockMap: blockMap
-  };
-}
-
 function addToBlacklist(site) {
   return {
     type: ADD_TO_BLACKLIST,
@@ -28764,6 +28780,33 @@ function pause() {
 function play() {
   return {
     type: PLAY
+  };
+}
+
+function onAuth() {
+  return {
+    type: ON_AUTH
+  };
+}
+
+function setProtagonist(protagonist) {
+  return {
+    type: SET_PROTAGONIST,
+    protagonist: protagonist
+  };
+}
+
+function setRecentTasks(tasks) {
+  return {
+    type: SET_RECENT_TASKS,
+    tasks: tasks
+  };
+}
+
+function addRecentTask(task) {
+  return {
+    type: ADD_RECENT_TASK,
+    task: task
   };
 }
 },{"../api/api.js":"api/api.js"}],"components/Logo.js":[function(require,module,exports) {
@@ -28816,8 +28859,8 @@ function (_React$Component) {
         src: "/images/icon_32.png",
         alt: "Deep Mode Icon"
       }), _react.default.createElement("span", {
-        className: "text-bold"
-      }, "deepmode"));
+        className: this.props.light ? "text-light text-bold" : "text-bold"
+      }, "Deepmode"));
     }
   }]);
 
@@ -29043,9 +29086,10 @@ function (_React$Component) {
       var _this$props = this.props,
           isPaused = _this$props.isPaused,
           pause = _this$props.pause,
-          play = _this$props.play;
+          play = _this$props.play,
+          protagonist = _this$props.protagonist;
       return _react.default.createElement("header", {
-        className: "PopupHeader"
+        className: protagonist ? "PopupHeader" : "d-none"
       }, _react.default.createElement(_Logo.default, null), _react.default.createElement("div", null, _react.default.createElement(_iosPause.default, {
         size: "25",
         onClick: pause.bind(this),
@@ -29081,7 +29125,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var mapStateToProps = function mapStateToProps(state) {
   return {
-    isPaused: state.isPaused
+    isPaused: state.isPaused,
+    protagonist: state.protagonist
   };
 };
 
@@ -29099,7 +29144,125 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var PopupHeaderContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_PopupHeader.default);
 var _default = PopupHeaderContainer;
 exports.default = _default;
-},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/PopupHeader":"components/PopupHeader.js"}],"../node_modules/gud/index.js":[function(require,module,exports) {
+},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/PopupHeader":"components/PopupHeader.js"}],"components/Auth.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _Logo = _interopRequireDefault(require("./Logo"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Auth =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Auth, _React$Component);
+
+  function Auth(props) {
+    var _this;
+
+    _classCallCheck(this, Auth);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Auth).call(this, props));
+    _this.authWithGoogle = _this.authWithGoogle.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Auth, [{
+    key: "authWithGoogle",
+    value: function authWithGoogle() {
+      var onAuth = this.props.onAuth;
+      return onAuth();
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react.default.createElement("div", {
+        className: "Auth"
+      }, _react.default.createElement(_Logo.default, {
+        light: true
+      }), _react.default.createElement("div", {
+        className: "auth-form"
+      }, _react.default.createElement("h4", {
+        className: "text-light text-center"
+      }, "Goodbye distraction.", _react.default.createElement("br", null), " Hello productivity."), _react.default.createElement("p", {
+        className: "text-light text-center"
+      }, "Deepmode recognises and blocks every distraction, keeping you mindful and productive"), _react.default.createElement("button", {
+        className: "btn",
+        onClick: this.authWithGoogle
+      }, "Authenticate with Google", _react.default.createElement("div", null, _react.default.createElement("img", {
+        width: "22",
+        src: "/images/google-icon.png",
+        alt: "Google Icon"
+      })))));
+    }
+  }]);
+
+  return Auth;
+}(_react.default.Component);
+
+Auth.propTypes = {};
+var _default = Auth;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","./Logo":"components/Logo.js"}],"containers/AuthContainer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _reactRedux = require("react-redux");
+
+var _actions = require("../actions");
+
+var _Auth = _interopRequireDefault(require("../components/Auth"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    protagonist: state.protagonist
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    onAuth: function onAuth(protagonist) {
+      return dispatch((0, _actions.onAuth)(protagonist));
+    }
+  };
+};
+
+var AuthContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Auth.default);
+var _default = AuthContainer;
+exports.default = _default;
+},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/Auth":"components/Auth.js"}],"../node_modules/gud/index.js":[function(require,module,exports) {
 var global = arguments[3];
 'use strict';
 
@@ -32088,9 +32251,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -32108,24 +32271,48 @@ function (_React$Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(SetTask).call(this, props));
     _this.taskInputRef = _react.default.createRef();
+    _this.setTask = _this.setTask.bind(_assertThisInitialized(_this));
+    _this.returnToRecentTask = _this.returnToRecentTask.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(SetTask, [{
+    key: "setTask",
+    value: function setTask(taskDescription) {
+      if (taskDescription.length > 0) return this.props.setTask(taskDescription);
+    }
+  }, {
+    key: "returnToRecentTask",
+    value: function returnToRecentTask(description, categories) {
+      var _this$props = this.props,
+          updateTaskDescription = _this$props.updateTaskDescription,
+          updateTaskCategories = _this$props.updateTaskCategories,
+          updateRoute = _this$props.updateRoute,
+          addRecentTask = _this$props.addRecentTask;
+      updateTaskDescription(description);
+      updateTaskCategories(categories);
+      updateRoute("/task");
+      addRecentTask({
+        description: description,
+        categories: categories
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this2 = this;
 
-      var _this$props = this.props,
-          previousTasks = _this$props.previousTasks,
-          currentTask = _this$props.currentTask,
-          setTask = _this$props.setTask;
-      previousTasks ? previousTasks.map(function (task, i) {
+      var _this$props2 = this.props,
+          recentTasks = _this$props2.recentTasks,
+          currentTask = _this$props2.currentTask;
+      recentTasks = recentTasks ? recentTasks.map(function (task, i) {
         return _react.default.createElement("li", {
           key: i,
           className: "previous-task",
-          onClick: ""
-        }, _react.default.createElement("span", null, task), _react.default.createElement(_iosArrowThinRight.default, {
+          onClick: function onClick(e) {
+            return _this2.returnToRecentTask(task.description, task.categories);
+          }
+        }, _react.default.createElement("span", null, task.description), _react.default.createElement(_iosArrowThinRight.default, {
           size: 30
         }));
       }) : null;
@@ -32143,9 +32330,13 @@ function (_React$Component) {
       }), _react.default.createElement("button", {
         className: "btn",
         onClick: function onClick(e) {
-          return setTask(_this2.taskInputRef.current.value);
+          return _this2.setTask(_this2.taskInputRef.current.value);
         }
-      }, "Set Task")));
+      }, "Set Task")), _react.default.createElement("div", {
+        className: "divider"
+      }), _react.default.createElement("div", {
+        className: recentTasks.length ? "previous-tasks" : "d-none"
+      }, _react.default.createElement("h6", null, "Return to a previous task"), _react.default.createElement("ul", null, recentTasks)));
     }
   }]);
 
@@ -32173,7 +32364,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mapStateToProps = function mapStateToProps(state) {
   return {
     currentTask: state.currentTask,
-    previousTasks: state.previousTasks
+    recentTasks: state.recentTasks
   };
 };
 
@@ -32181,6 +32372,18 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
     setTask: function setTask(description) {
       return dispatch((0, _actions.setTask)(description));
+    },
+    updateTaskDescription: function updateTaskDescription(description) {
+      return dispatch((0, _actions.updateTaskDescription)(description));
+    },
+    updateTaskCategories: function updateTaskCategories(categories) {
+      return dispatch((0, _actions.updateTaskCategories)(categories));
+    },
+    updateRoute: function updateRoute(route) {
+      return dispatch((0, _actions.updateRoute)(route));
+    },
+    addRecentTask: function addRecentTask(task) {
+      return dispatch((0, _actions.addRecentTask)(task));
     }
   };
 };
@@ -63521,9 +63724,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
@@ -63536,23 +63739,43 @@ var Hit =
 function (_React$Component) {
   _inherits(Hit, _React$Component);
 
-  function Hit() {
+  function Hit(props) {
+    var _this;
+
     _classCallCheck(this, Hit);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Hit).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Hit).call(this, props));
+    _this.addCategory = _this.addCategory.bind(_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(Hit, [{
+    key: "addCategory",
+    value: function addCategory(newCategory) {
+      var _this$props = this.props,
+          taskDescription = _this$props.taskDescription,
+          categories = _this$props.categories,
+          updateTaskCategories = _this$props.updateTaskCategories,
+          addRecentTask = _this$props.addRecentTask;
+      var updatedCategories = categories.concat(newCategory);
+      addRecentTask({
+        description: taskDescription,
+        categories: updatedCategories
+      });
+      return updateTaskCategories(updatedCategories);
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this$props = this.props,
-          hit = _this$props.hit,
-          categories = _this$props.categories,
-          updateTaskCategories = _this$props.updateTaskCategories;
+      var _this2 = this;
+
+      var hit = this.props.hit;
       var category = hit.hit.category;
       return _react.default.createElement("div", {
         className: "hit-text",
-        onMouseDown: updateTaskCategories.bind(this, categories.concat(category))
+        onMouseDown: function onMouseDown(e) {
+          return _this2.addCategory(category);
+        }
       }, category, _react.default.createElement("span", null, _react.default.createElement(_iosPlusEmpty.default, null), " Add"));
     }
   }]);
@@ -63566,43 +63789,53 @@ function (_React$Component2) {
   _inherits(OnTask, _React$Component2);
 
   function OnTask(props) {
-    var _this;
+    var _this3;
 
     _classCallCheck(this, OnTask);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(OnTask).call(this, props));
-    _this.removeCategory = _this.removeCategory.bind(_assertThisInitialized(_this));
-    _this.state = {
+    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(OnTask).call(this, props));
+    _this3.removeCategory = _this3.removeCategory.bind(_assertThisInitialized(_this3));
+    _this3.state = {
       searchFocused: false
     };
-    return _this;
+    return _this3;
   }
 
   _createClass(OnTask, [{
     key: "removeCategory",
     value: function removeCategory(i) {
-      var categories = this.props.currentTaskCategories.filter(function (category, j) {
+      var _this$props2 = this.props,
+          currentTaskCategories = _this$props2.currentTaskCategories,
+          updateTaskCategories = _this$props2.updateTaskCategories,
+          currentTaskDescription = _this$props2.currentTaskDescription,
+          addRecentTask = _this$props2.addRecentTask;
+      var categories = currentTaskCategories.filter(function (category, j) {
         return j !== i;
       });
-      return this.props.updateTaskCategories(categories);
+      addRecentTask({
+        description: currentTaskDescription,
+        categories: categories
+      });
+      return updateTaskCategories(categories);
     }
   }, {
     key: "render",
     value: function render() {
-      var _this2 = this;
+      var _this4 = this;
 
-      var _this$props2 = this.props,
-          currentTaskDescription = _this$props2.currentTaskDescription,
-          currentTaskCategories = _this$props2.currentTaskCategories,
-          updateRoute = _this$props2.updateRoute,
-          updateTaskCategories = _this$props2.updateTaskCategories,
-          categoriesLoading = _this$props2.categoriesLoading;
+      var _this$props3 = this.props,
+          currentTaskDescription = _this$props3.currentTaskDescription,
+          currentTaskCategories = _this$props3.currentTaskCategories,
+          updateRoute = _this$props3.updateRoute,
+          updateTaskCategories = _this$props3.updateTaskCategories,
+          categoriesLoading = _this$props3.categoriesLoading,
+          addRecentTask = _this$props3.addRecentTask;
       var categories = currentTaskCategories.map(function (category, i) {
         return _react.default.createElement("div", {
           key: i,
           className: "category chip"
         }, category, _react.default.createElement(_iosCloseEmpty.default, {
-          onClick: _this2.removeCategory.bind(_this2, i),
+          onClick: _this4.removeCategory.bind(_this4, i),
           size: "20",
           color: "#e74c3c"
         }));
@@ -63631,12 +63864,12 @@ function (_React$Component2) {
           placeholder: "Search and click to add a category..."
         },
         onFocus: function onFocus(e) {
-          return _this2.setState({
+          return _this4.setState({
             searchFocused: true
           });
         },
         onBlur: function onBlur(e) {
-          return _this2.setState({
+          return _this4.setState({
             searchFocused: false
           });
         }
@@ -63646,7 +63879,9 @@ function (_React$Component2) {
           return _react.default.createElement(Hit, {
             hit: hit,
             categories: currentTaskCategories,
-            updateTaskCategories: updateTaskCategories
+            updateTaskCategories: updateTaskCategories,
+            taskDescription: currentTaskDescription,
+            addRecentTask: addRecentTask
           });
         }
       }))), _react.default.createElement("p", {
@@ -63692,6 +63927,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     updateRoute: function updateRoute(route) {
       return dispatch((0, _actions.updateRoute)(route));
+    },
+    addRecentTask: function addRecentTask(task) {
+      return dispatch((0, _actions.addRecentTask)(task));
     }
   };
 };
@@ -63710,6 +63948,8 @@ exports.default = void 0;
 var _react = _interopRequireDefault(require("react"));
 
 var _PopupHeaderContainer = _interopRequireDefault(require("../containers/PopupHeaderContainer"));
+
+var _AuthContainer = _interopRequireDefault(require("../containers/AuthContainer"));
 
 var _SetTaskContainer = _interopRequireDefault(require("../containers/SetTaskContainer"));
 
@@ -63757,9 +63997,11 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var route = this.props.route;
+      var _this$props2 = this.props,
+          route = _this$props2.route,
+          protagonist = _this$props2.protagonist;
       var result = null;
-      if (route === "/") result = _react.default.createElement(_SetTaskContainer.default, null);else if (route === "/task") result = _react.default.createElement(_OnTaskContainer.default, null);
+      if (!protagonist) result = _react.default.createElement(_AuthContainer.default, null);else if (route === "/") result = _react.default.createElement(_SetTaskContainer.default, null);else if (route === "/task") result = _react.default.createElement(_OnTaskContainer.default, null);
       return _react.default.createElement("div", {
         className: "Popup"
       }, _react.default.createElement(_PopupHeaderContainer.default, null), result);
@@ -63771,7 +64013,7 @@ function (_React$Component) {
 
 var _default = Popup;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","../containers/PopupHeaderContainer":"containers/PopupHeaderContainer.js","../containers/SetTaskContainer":"containers/SetTaskContainer.js","../containers/OnTaskContainer":"containers/OnTaskContainer.js"}],"containers/PopupContainer.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../containers/PopupHeaderContainer":"containers/PopupHeaderContainer.js","../containers/AuthContainer":"containers/AuthContainer.js","../containers/SetTaskContainer":"containers/SetTaskContainer.js","../containers/OnTaskContainer":"containers/OnTaskContainer.js"}],"containers/PopupContainer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -63790,7 +64032,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mapStateToProps = function mapStateToProps(state) {
   return {
     taskDescription: state.taskDescription,
-    route: state.route
+    route: state.route,
+    protagonist: state.protagonist
   };
 };
 
@@ -65377,7 +65620,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35781" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34347" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

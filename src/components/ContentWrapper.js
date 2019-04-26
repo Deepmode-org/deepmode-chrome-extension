@@ -3,7 +3,6 @@ import DistractionBlockContainer from "../containers/DistractionBlockContainer.j
 
 class ContentWrapper extends React.Component {
   render() {
-    const { blockMap } = this.props;
     let toRender = null;
 
     return (

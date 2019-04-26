@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { updateTaskCategories, updateRoute } from "../actions";
+import { updateTaskCategories, updateRoute, addRecentTask } from "../actions";
 import OnTask from "../components/OnTask";
 
 const mapStateToProps = (state) => {
@@ -13,7 +13,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     updateTaskCategories: categories => dispatch(updateTaskCategories(categories)),
-    updateRoute: route => dispatch(updateRoute(route))
+    updateRoute: route => dispatch(updateRoute(route)),
+    addRecentTask: task => dispatch(addRecentTask(task))
   };
 }
 

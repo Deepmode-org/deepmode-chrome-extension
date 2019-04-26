@@ -5,7 +5,8 @@ import Popup from "../components/Popup";
 const mapStateToProps = (state) => {
   return {
     taskDescription: state.taskDescription,
-    route: state.route
+    route: state.route,
+    protagonist: state.protagonist
   };
 }
 
