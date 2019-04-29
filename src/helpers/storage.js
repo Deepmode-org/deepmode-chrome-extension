@@ -62,6 +62,10 @@ async function setStateToDB(state, stateDiff) {
     let { description, categories } = stateDiff.recentTasks[0];
     let originalTask = state.recentTasks.find(task => task.description === description);
     if (_.difference(categories, originalTask.categories).length) {
+      // Add task in DB if categories are adjusted
+      addRecentTask(protagonist.id, description, categories);
+    } else if (stateDiff.recentTasks[0].description !== state.recentTasks[0].description) {
+      // Add task in DB when a new task is started
       addRecentTask(protagonist.id, description, categories);
     }
   }

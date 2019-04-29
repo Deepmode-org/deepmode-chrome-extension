@@ -13,7 +13,9 @@ export const UPDATE_CATEGORIES_LOADING = "UPDATE_CATEGORIES_LOADING";
 export const PAUSE = "PAUSE";
 export const PLAY = "PLAY";
 export const SET_PROTAGONIST = "SET_PROTAGONIST";
+export const UNSET_PROTAGONIST = "UNSET_PROTAGONIST";
 export const ON_AUTH = "ON_AUTH";
+export const SIGN_OUT = "SIGN_OUT";
 export const SET_RECENT_TASKS = "SET_RECENT_TASKS";
 export const ADD_RECENT_TASK = "ADD_RECENT_TASK";
 export const DELETE_ACCOUNT = "DELETE_ACCOUNT";
@@ -120,6 +122,12 @@ export function setProtagonist(protagonist) {
   };
 }
 
+export function unsetProtagonist() {
+  return {
+    type: UNSET_PROTAGONIST
+  };
+}
+
 export function setRecentTasks(tasks) {
   return {
     type: SET_RECENT_TASKS,
@@ -131,6 +139,12 @@ export function addRecentTask(task) {
   return {
     type: ADD_RECENT_TASK,
     task
+  };
+}
+
+export function signOut() {
+  return {
+    type: SIGN_OUT
   };
 }
 

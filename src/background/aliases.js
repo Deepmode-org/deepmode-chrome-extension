@@ -26,7 +26,6 @@ function setTask(originalAction) {
         dispatch(updateCategoriesLoading(false));
         dispatch(addRecentTask({ description, categories }));
         const { protagonist } = store.getState();
-        api.addRecentTask(protagonist.id, description, categories);
       });
     } catch (err) {
       console.log(err);
@@ -77,7 +76,19 @@ function onAuth(originalAction) {
   }
 }
 
+function signOut(originalAction) {
+  const { unsetProtagonist } = actions;
+  return function(dispatch) {
+    return chrome.identity.getAuthToken(function(token) {
+      return chrome.identity.removeCachedAuthToken({ token }, function() {
+        dispatch(unsetProtagonist());
+      });
+    })
+  }
+}
+
 export default {
   SET_TASK: setTask,
-  ON_AUTH: onAuth
+  ON_AUTH: onAuth,
+  SIGN_OUT: signOut
 };

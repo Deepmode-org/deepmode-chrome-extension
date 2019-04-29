@@ -1,4 +1,4 @@
-import { SET_PROTAGONIST, DELETE_ACCOUNT } from "../actions/";
+import { SET_PROTAGONIST, UNSET_PROTAGONIST, DELETE_ACCOUNT } from "../actions/";
 
 export default function protagonist(state = null, action) {
   if (typeof state === "undefined")
@@ -7,6 +7,8 @@ export default function protagonist(state = null, action) {
   switch (action.type) {
     case SET_PROTAGONIST:
       return action.protagonist;
+    case UNSET_PROTAGONIST:
+      return null;
     default:
       return state;
   }

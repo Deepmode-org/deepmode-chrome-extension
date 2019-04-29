@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import { deleteAccount, updateRoute } from "../actions";
+import { deleteAccount, updateRoute, signOut } from "../actions";
 import Settings from "../components/Settings";
 
 const mapStateToProps = (state) => {
@@ -11,7 +11,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     deleteAccount: protagonistID => dispatch(deleteAccount(protagonistID)),
-    updateRoute: route => dispatch(updateRoute(route))
+    updateRoute: route => dispatch(updateRoute(route)),
+    signOut: () => dispatch(signOut())
   };
 }
 

@@ -21,8 +21,8 @@ const store = createStore(
 
 // Update long term storage values when they change
 store.subscribe(function() {
-  let { blacklist, whitelist, recentTasks } = store.getState();
-  storeStateDiff({ blacklist, whitelist, recentTasks });
+  let { blacklist, whitelist, recentTasks, protagonist } = store.getState();
+  storeStateDiff({ blacklist, whitelist, recentTasks, protagonist });
 });
 
 // if (!initialState.recentTasks) {
