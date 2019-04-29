@@ -10,10 +10,14 @@ function setTask(originalAction) {
       updateTaskCategories,
       updateRoute,
       updateCategoriesLoading,
-      addRecentTask
+      addRecentTask,
+      play
     } = actions;
+    
     const description = originalAction.description;
+    dispatch(play());
     dispatch(updateTaskDescription(description));
+    
     try {
       dispatch(updateRoute("/task"));
       dispatch(updateCategoriesLoading(true));
@@ -31,7 +35,7 @@ function setTask(originalAction) {
 }
 
 function onAuth(originalAction) {
-  const { setProtagonist } = actions;
+  const { setProtagonist, setRecentTasks, setBlacklist, setWhitelist } = actions;
   return function(dispatch) {
     return chrome.identity.getAuthToken({ interactive: true }, function(token) {
       let params = {
@@ -51,12 +55,19 @@ function onAuth(originalAction) {
       .then(response => response.json())
       .then(function(data) {
         const { email, name, locale } = data;
-        const protagonist = { email, name, locale };
+        const protagonistToInsert = { email, name, locale };
 
-        api.onAuth(protagonist).then(function(stateFromDB) {
+        api.onAuth(protagonistToInsert).then(function(stateFromDB) {
+          // Update state with info in the DB
           setStateToChromeStorage(stateFromDB);
           setStateToLocalStorage(stateFromDB);
+
+          const { protagonist, blacklist, whitelist, recentTasks } = stateFromDB;
+          
           dispatch(setProtagonist(protagonist));
+          dispatch(setBlacklist(blacklist));
+          dispatch(setWhitelist(whitelist));
+          dispatch(setRecentTasks(recentTasks));
         }).catch(function(err) {
           console.log(err);
           // do something with error

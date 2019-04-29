@@ -7,7 +7,11 @@ export default function recentTasks(state = [], action) {
 
   switch (action.type) {
     case SET_RECENT_TASKS:
-      return action.tasks;
+      return _.uniq(
+        action.tasks,
+        true,
+        task => task.description
+      );
     case ADD_RECENT_TASK:
       return _.uniq(
         [action.task].concat(state),

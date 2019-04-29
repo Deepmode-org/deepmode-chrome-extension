@@ -16,7 +16,8 @@ class SetTask extends React.Component {
   }
 
   returnToRecentTask(description, categories) {
-    const { updateTaskDescription, updateTaskCategories, updateRoute, addRecentTask } = this.props;
+    const { updateTaskDescription, updateTaskCategories, updateRoute, addRecentTask, play } = this.props;
+    play();
     updateTaskDescription(description);
     updateTaskCategories(categories);
     updateRoute("/task");

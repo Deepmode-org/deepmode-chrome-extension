@@ -398,9 +398,8 @@ function updateUI(url) {
     case "stackoverflow":
     case "stackexchange":
       return (0, _augment.default)(_augmentationConditions.default["stackexchange"]);
-
-    case "youtube":
-      return (0, _augment.default)(_augmentationConditions.default["youtube"], true);
+    // case "youtube":
+    //   return augment(augmentationConditions["youtube"], true);
     // case "ycombinator":
     //   if (url.includes("news.ycombinator"))
     //     return augment(augmentationConditions["hackernews"]);
@@ -412,7 +411,30 @@ function updateUI(url) {
       return;
   }
 }
-},{"./augment.js":"content_scripts/augment.js","./augmentationConditions.js":"content_scripts/augmentationConditions.js","../helpers/extractDomain.js":"helpers/extractDomain.js"}],"content_scripts/showBlock.js":[function(require,module,exports) {
+},{"./augment.js":"content_scripts/augment.js","./augmentationConditions.js":"content_scripts/augmentationConditions.js","../helpers/extractDomain.js":"helpers/extractDomain.js"}],"helpers/urls.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.isUrlInBlacklist = isUrlInBlacklist;
+exports.isUrlInWhitelist = isUrlInWhitelist;
+
+/*
+  Helper functions for dealing with URLs
+*/
+function isUrlInBlacklist(blacklist, url) {
+  return blacklist.some(function (bUrl) {
+    return url.includes(bUrl);
+  });
+}
+
+function isUrlInWhitelist(whitelist, url) {
+  return whitelist.some(function (wUrl) {
+    return url.includes(wUrl);
+  });
+}
+},{}],"content_scripts/showBlock.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -422,15 +444,28 @@ exports.default = showBlock;
 
 var _messaging = require("./messaging.js");
 
-function showBlock(window, document, taskDescription) {
-  var blockInner = "\n    <div class=\"ContentWrapper\">\n      <div class=\"DistractionBlock\">\n        <div class=\"container grid-sm\">\n          <div class=\"task-summary columns\">\n            <div class=\"column\">\n              <div class=\"current\">\n                <p>\n                  Here's what you're supposed to be working on:\n                </p>\n                <p class=\"task text-bold text-italic\">\n                  ".concat(taskDescription, "\n                </p>\n              </div>\n              <div class=\"new-page\">\n                <p>Here's what this new page is about:</p>\n                <p class=\"page-title text-bold text-italic\">\n                  ").concat(document.title, "\n                </p>\n              </div>\n            </div>\n          </div>\n          <div class=\"columns\">\n            <div class=\"column\">\n              <p>Are you on task?</p>\n            </div>\n          </div>\n          <div class=\"options columns\">\n            <div class=\"column\">\n              <button id=\"deepmode-allow-tab\" class=\"allow-tab btn\">\n                Yes, continue\n              </button>\n              <button id=\"deepmode-close-tab\" class=\"close-tab btn btn-success\">\n                No, close this tab\n              </button>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>");
-  var deepmodeRootElem = document.getElementById("deepmode-root");
-  deepmodeRootElem.innerHTML = blockInner;
-  deepmodeRootElem.style.display = "block";
-  document.getElementById("deepmode-allow-tab").addEventListener("click", function () {
-    deepmodeRootElem.style.display = "none";
-  });
-  document.getElementById("deepmode-close-tab").addEventListener("click", _messaging.closeCurrentTab);
+function showBlock(window, document, _ref) {
+  var type = _ref.type,
+      taskDescription = _ref.taskDescription;
+  var blockInner;
+
+  if (type === "off_task") {
+    blockInner = "\n      <div class=\"ContentWrapper\">\n        <div class=\"DistractionBlock\">\n          <div class=\"container grid-sm\">\n            <div class=\"task-summary columns\">\n              <div class=\"column\">\n                <div class=\"current\">\n                  <p>\n                    Here's what you're supposed to be working on:\n                  </p>\n                  <p class=\"task text-bold text-italic\">\n                    ".concat(taskDescription, "\n                  </p>\n                </div>\n                <div class=\"new-page\">\n                  <p>Here's what this new page is about:</p>\n                  <p class=\"page-title text-bold text-italic\">\n                    ").concat(document.title, "\n                  </p>\n                </div>\n              </div>\n            </div>\n            <div class=\"columns\">\n              <div class=\"column\">\n                <p>Are you on task?</p>\n              </div>\n            </div>\n            <div class=\"options columns\">\n              <div class=\"column\">\n                <button id=\"deepmode-allow-tab\" class=\"allow-tab btn\">\n                  Yes, continue\n                </button>\n                <button id=\"deepmode-close-tab\" class=\"close-tab btn btn-success\">\n                  No, close this tab\n                </button>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>");
+    var deepmodeRootElem = document.getElementById("deepmode-root");
+    deepmodeRootElem.innerHTML = blockInner;
+    deepmodeRootElem.style.display = "block";
+    document.getElementById("deepmode-allow-tab").addEventListener("click", function () {
+      deepmodeRootElem.style.display = "none";
+    });
+    document.getElementById("deepmode-close-tab").addEventListener("click", _messaging.closeCurrentTab);
+  } else if (type === "blacklist") {
+    blockInner = "\n      <div class=\"ContentWrapper\">\n        <div class=\"BlacklistBlock\" style=\"align-items: center;background: white;color: #3d424e;display: flex;flex-direction: column;font-family: sans-serif;font-size: 18px;height: 100vh;justify-content: center;left: 0;padding: 5rem;position: fixed;top: 0;width: 100vw;z-index: 2147483638;\">\n          <div class=\"container grid-sm\" style=\"align-items: center; display: flex; justify-content: center;\">\n            <h2 style=\"word-break break-all;\">This url \"".concat(window.location.href, "\" is on your Deepmode blacklist.</h2>\n          </div>\n        </div>\n      </div>");
+
+    var _deepmodeRootElem = document.getElementById("deepmode-root");
+
+    _deepmodeRootElem.innerHTML = blockInner;
+    _deepmodeRootElem.style.display = "block";
+  }
 }
 },{"./messaging.js":"content_scripts/messaging.js"}],"content_scripts/messaging.js":[function(require,module,exports) {
 "use strict";
@@ -438,8 +473,10 @@ function showBlock(window, document, taskDescription) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.onTopicMismatch = onTopicMismatch;
+exports.initMsgListeners = initMsgListeners;
 exports.closeCurrentTab = closeCurrentTab;
+
+var _urls = require("../helpers/urls");
 
 var _showBlock = _interopRequireDefault(require("./showBlock.js"));
 
@@ -452,15 +489,30 @@ function sendMessage(type) {
   }, params));
 }
 
-function onTopicMismatch(store) {
-  chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-    var _store$getState = store.getState(),
-        taskDescription = _store$getState.taskDescription;
+function initMsgListeners(store) {
+  var _store$getState = store.getState(),
+      blacklist = _store$getState.blacklist,
+      isPaused = _store$getState.isPaused;
 
+  if (!isPaused && (0, _urls.isUrlInBlacklist)(blacklist, window.location.href)) (0, _showBlock.default)(window, document, {
+    type: "blacklist"
+  });
+  return chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg.type === "topic_match") {
       if (!msg.match) {
-        (0, _showBlock.default)(window, document, taskDescription);
+        var _store$getState2 = store.getState(),
+            taskDescription = _store$getState2.taskDescription;
+
+        (0, _showBlock.default)(window, document, {
+          type: "off_task",
+          taskDescription: taskDescription
+        });
       }
+    } else if (msg.type === "blacklist") {
+      (0, _showBlock.default)(window, document, {
+        type: "blacklist",
+        title: msg.title
+      });
     }
   });
 }
@@ -468,7 +520,7 @@ function onTopicMismatch(store) {
 function closeCurrentTab() {
   return sendMessage("close_current_tab");
 }
-},{"./showBlock.js":"content_scripts/showBlock.js"}],"content_scripts/bodyReady.js":[function(require,module,exports) {
+},{"../helpers/urls":"helpers/urls.js","./showBlock.js":"content_scripts/showBlock.js"}],"content_scripts/bodyReady.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2033,6 +2085,8 @@ var _bodyReady = _interopRequireDefault(require("./bodyReady.js"));
 
 var _webextRedux = require("webext-redux");
 
+var _showBlock = _interopRequireDefault(require("./showBlock"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
@@ -2060,11 +2114,11 @@ Promise.all([(0, _bodyReady.default)(document), store.ready()]).then(function (a
   styleLink.type = "text/css";
   styleLink.href = cssFile;
   document.getElementsByTagName("head")[0].appendChild(styleLink);
-  (0, _messaging.onTopicMismatch)(store);
+  (0, _messaging.initMsgListeners)(store);
 }); // Update UI of certain distracting sites
 
 (0, _siteSpecifics.updateUI)(window.location.href);
-},{"../styles/content_scripts.scss":"styles/content_scripts.scss","./siteSpecifics.js":"content_scripts/siteSpecifics.js","./messaging.js":"content_scripts/messaging.js","./bodyReady.js":"content_scripts/bodyReady.js","webext-redux":"../node_modules/webext-redux/lib/index.js"}],"../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../styles/content_scripts.scss":"styles/content_scripts.scss","./siteSpecifics.js":"content_scripts/siteSpecifics.js","./messaging.js":"content_scripts/messaging.js","./bodyReady.js":"content_scripts/bodyReady.js","webext-redux":"../node_modules/webext-redux/lib/index.js","./showBlock":"content_scripts/showBlock.js"}],"../../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2092,7 +2146,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34347" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45269" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

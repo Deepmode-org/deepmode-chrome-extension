@@ -1,4 +1,4 @@
-import { SET_PROTAGONIST } from "../actions/";
+import { SET_PROTAGONIST, DELETE_ACCOUNT } from "../actions/";
 
 export default function protagonist(state = null, action) {
   if (typeof state === "undefined")

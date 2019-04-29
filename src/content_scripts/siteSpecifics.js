@@ -12,8 +12,8 @@ export function updateUI(url) {
     case "stackoverflow":
     case "stackexchange":
       return augment(augmentationConditions["stackexchange"]);
-    case "youtube":
-      return augment(augmentationConditions["youtube"], true);
+    // case "youtube":
+    //   return augment(augmentationConditions["youtube"], true);
     // case "ycombinator":
     //   if (url.includes("news.ycombinator"))
     //     return augment(augmentationConditions["hackernews"]);

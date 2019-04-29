@@ -3,6 +3,7 @@ import taskDescription from "./taskDescription";
 import taskCategories from "./taskCategories";
 import route from "./route";
 import blacklist from "./blacklist";
+import whitelist from "./whitelist";
 import categoriesLoading from "./categoriesLoading";
 import isPaused from "./isPaused";
 import protagonist from "./protagonist";
@@ -13,6 +14,7 @@ const deepmodeApp = combineReducers({
   taskCategories,
   route,
   blacklist,
+  whitelist,
   categoriesLoading,
   isPaused,
   protagonist,

@@ -78,3 +78,19 @@ export function addRecentTask(protagonistID, description, categories) {
     { protagonistID, description, categories }
   );
 }
+
+export function updateBlacklist(protagonistID, blacklist) {
+  return makeRequest(
+    "POST",
+    `https://deepmode-api.herokuapp.com/protagonist/${protagonistID}/blacklist`,
+    { blacklist }
+  );
+}
+
+export function updateWhitelist(protagonistID, whitelist) {
+  return makeRequest(
+    "POST",
+    `https://deepmode-api.herokuapp.com/protagonist/${protagonistID}/whitelist`,
+    { whitelist }
+  );
+}

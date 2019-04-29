@@ -555,6 +555,12 @@
   padding-bottom: 0.75rem;
   white-space: nowrap;
 }
+#deepmode-root .table.table-scroll-v {
+  display: block;
+  overflow-x: auto;
+  overflow-y: auto;
+  white-space: nowrap;
+}
 #deepmode-root .table td,
 #deepmode-root .table th {
   border-bottom: 0.05rem solid #dadee4;
@@ -742,6 +748,10 @@
 }
 #deepmode-root .btn.btn-clear::before {
   content: "✕";
+}
+#deepmode-root .btn svg {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
 }
 #deepmode-root .btn-group {
   display: inline-flex;
@@ -3289,6 +3299,54 @@
   margin-left: 0.5rem;
   width: 30px;
 }
+#deepmode-root .Blacklist {
+  padding: 1rem;
+}
+#deepmode-root .Blacklist .table {
+  height: 250px;
+  margin-top: 0.5rem;
+}
+#deepmode-root .Blacklist .table tbody {
+  width: 100%;
+}
+#deepmode-root .Blacklist .table tbody tr {
+  width: 100%;
+}
+#deepmode-root .Blacklist .table tbody tr .url {
+  width: 100%;
+}
+#deepmode-root .Blacklist .table tbody tr .remove-url {
+  width: 0.5rem;
+}
+#deepmode-root .Blacklist .table tbody tr .remove-url svg {
+  color: red;
+  cursor: pointer;
+}
+#deepmode-root .Blacklist .empty-blacklist {
+  margin-top: 1rem;
+}
+#deepmode-root .BlacklistBlock {
+  align-items: center;
+  background: white;
+  color: #3d424e;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+  font-size: 18px;
+  height: 100vh;
+  justify-content: center;
+  left: 0;
+  padding: 5rem;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 2147483638;
+}
+#deepmode-root .BlacklistBlock .container {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
 #deepmode-root .DistractionBlock {
   align-items: center;
   background: white;
@@ -3331,6 +3389,7 @@
 }
 #deepmode-root .Logo {
   align-items: center;
+  cursor: pointer;
   display: flex;
   justify-content: space-around;
 }
@@ -3441,6 +3500,7 @@
 #deepmode-root .PopupHeader svg {
   color: #5F27CD;
   cursor: pointer;
+  margin-left: 0.5rem;
 }
 #deepmode-root .SetTask {
   align-items: center;
@@ -3477,6 +3537,41 @@
 }
 #deepmode-root .SetTask .previous-tasks ul .previous-task:hover svg {
   font-size: 45px;
+}
+#deepmode-root .Settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 2rem;
+}
+#deepmode-root .Settings button {
+  margin-bottom: 1rem;
+}
+#deepmode-root .Whitelist {
+  padding: 1rem;
+}
+#deepmode-root .Whitelist .table {
+  height: 250px;
+  margin-top: 0.5rem;
+}
+#deepmode-root .Whitelist .table tbody {
+  width: 100%;
+}
+#deepmode-root .Whitelist .table tbody tr {
+  width: 100%;
+}
+#deepmode-root .Whitelist .table tbody tr .url {
+  width: 100%;
+}
+#deepmode-root .Whitelist .table tbody tr .remove-url {
+  width: 0.5rem;
+}
+#deepmode-root .Whitelist .table tbody tr .remove-url svg {
+  color: red;
+  cursor: pointer;
+}
+#deepmode-root .Whitelist .empty-whitelist {
+  margin-top: 1rem;
 }
 
 /*# sourceMappingURL=/index.css.map */

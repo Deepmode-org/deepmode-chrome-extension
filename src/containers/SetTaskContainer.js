@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { setTask, updateTaskDescription, updateTaskCategories, updateRoute, addRecentTask } from "../actions/";
+import { setTask, updateTaskDescription, updateTaskCategories, updateRoute, addRecentTask, play } from "../actions/";
 import SetTask from "../components/SetTask";
 
 const mapStateToProps = (state) => {
@@ -15,7 +15,8 @@ const mapDispatchToProps = (dispatch) => {
     updateTaskDescription: description => dispatch(updateTaskDescription(description)),
     updateTaskCategories: categories => dispatch(updateTaskCategories(categories)),
     updateRoute: route => dispatch(updateRoute(route)),
-    addRecentTask: task => dispatch(addRecentTask(task))
+    addRecentTask: task => dispatch(addRecentTask(task)),
+    play: () => dispatch(play())
   };
 }
 

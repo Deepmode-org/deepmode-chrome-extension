@@ -576,6 +576,13 @@ html:lang(ko),
   white-space: nowrap;
 }
 
+.table.table-scroll-v {
+  display: block;
+  overflow-x: auto;
+  overflow-y: auto;
+  white-space: nowrap;
+}
+
 .table td,
 .table th {
   border-bottom: 0.05rem solid #dadee4;
@@ -795,6 +802,11 @@ html:lang(ko),
 
 .btn.btn-clear::before {
   content: "✕";
+}
+
+.btn svg {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
 }
 
 .btn-group {
@@ -3859,6 +3871,56 @@ a.text-error:visited {
   width: 30px;
 }
 
+.Blacklist {
+  padding: 1rem;
+}
+.Blacklist .table {
+  height: 250px;
+  margin-top: 0.5rem;
+}
+.Blacklist .table tbody {
+  width: 100%;
+}
+.Blacklist .table tbody tr {
+  width: 100%;
+}
+.Blacklist .table tbody tr .url {
+  width: 100%;
+}
+.Blacklist .table tbody tr .remove-url {
+  width: 0.5rem;
+}
+.Blacklist .table tbody tr .remove-url svg {
+  color: red;
+  cursor: pointer;
+}
+.Blacklist .empty-blacklist {
+  margin-top: 1rem;
+}
+
+.BlacklistBlock {
+  align-items: center;
+  background: white;
+  color: #3d424e;
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+  font-size: 18px;
+  height: 100vh;
+  justify-content: center;
+  left: 0;
+  padding: 5rem;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 2147483638;
+}
+.BlacklistBlock .container {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
 .DistractionBlock {
   align-items: center;
   background: white;
@@ -3902,6 +3964,7 @@ a.text-error:visited {
 
 .Logo {
   align-items: center;
+  cursor: pointer;
   display: flex;
   justify-content: space-around;
 }
@@ -4015,6 +4078,7 @@ a.text-error:visited {
 .PopupHeader svg {
   color: #5F27CD;
   cursor: pointer;
+  margin-left: 0.5rem;
 }
 
 .SetTask {
@@ -4052,6 +4116,43 @@ a.text-error:visited {
 }
 .SetTask .previous-tasks ul .previous-task:hover svg {
   font-size: 45px;
+}
+
+.Settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 2rem;
+}
+.Settings button {
+  margin-bottom: 1rem;
+}
+
+.Whitelist {
+  padding: 1rem;
+}
+.Whitelist .table {
+  height: 250px;
+  margin-top: 0.5rem;
+}
+.Whitelist .table tbody {
+  width: 100%;
+}
+.Whitelist .table tbody tr {
+  width: 100%;
+}
+.Whitelist .table tbody tr .url {
+  width: 100%;
+}
+.Whitelist .table tbody tr .remove-url {
+  width: 0.5rem;
+}
+.Whitelist .table tbody tr .remove-url svg {
+  color: red;
+  cursor: pointer;
+}
+.Whitelist .empty-whitelist {
+  margin-top: 1rem;
 }
 
 /*# sourceMappingURL=/popup.css.map */

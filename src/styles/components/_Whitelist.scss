@@ -1,0 +1,33 @@
+.Whitelist {
+  padding: 1rem;
+
+  .table {
+    height: 250px;
+    margin-top: 0.5rem;
+
+    tbody {
+      width: 100%;
+
+      tr {
+        width: 100%;
+
+        .url {
+          width: 100%;
+        }
+
+        .remove-url {
+          width: 0.5rem;
+
+          svg {
+            color: red;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+
+  .empty-whitelist {
+    margin-top: 1rem;
+  }
+}

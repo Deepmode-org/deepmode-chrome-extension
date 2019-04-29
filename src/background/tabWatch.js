@@ -2,30 +2,44 @@ import store from "./store.js";
 import Mercury from "@postlight/mercury-parser";
 import { checkMatch } from "../api/api.js";
 import extractDomainNameWithoutTLD from "../helpers/extractDomain";
+import { isUrlInBlacklist, isUrlInWhitelist } from "../helpers/urls";
 
 let isFirstLoad = true;
 
+function blacklistBlock(tabId) {
+  return chrome.tabs.sendMessage(tabId, {
+    type: "blacklist"
+  });
+}
+
 function noMatch(tabId) {
-  chrome.tabs.sendMessage(tabId, { type: "topic_match", match: false });
+  return chrome.tabs.sendMessage(tabId, { type: "topic_match", match: false });
 }
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  let { taskCategories, elem, blacklist, isPaused } = store.getState();
+  let title = tab.title, url = tab.url, domainName = extractDomainNameWithoutTLD(tab.url);
+  let { taskCategories, elem, blacklist, whitelist, isPaused } = store.getState();
 
   if (isPaused)
+    return;
+
+  if (url.includes("chrome://"))
+      return;
+
+  if (url.includes(".google."))
+    return;
+
+  // No need to call API for sites on the whitelist
+  if (isUrlInWhitelist(whitelist, url))
+    return;
+
+  // No need to call API for known blocked sites
+  if (isUrlInBlacklist(blacklist, url))
     return;
 
   // Make sure API call only fires once on tab update
   if (changeInfo.status === "loading" && isFirstLoad) {
     isFirstLoad = false;
-    let title = tab.title, url = tab.url, domainName = extractDomainNameWithoutTLD(tab.url);
-
-    if (url === "chrome://newtab/")
-      return;
-      
-    // No need to call API for known blocked sites
-    if (blacklist.includes(url))
-      return noMatch(tabId);
     
     if (taskCategories.length > 0) {
       return Mercury.parse(url).then(function(result) {

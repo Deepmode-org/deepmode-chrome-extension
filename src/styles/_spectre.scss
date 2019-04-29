@@ -542,6 +542,13 @@ html:lang(ko),
   white-space: nowrap;
 }
 
+.table.table-scroll-v {
+  display: block;
+  overflow-x: auto;
+  overflow-y: auto;
+  white-space: nowrap;
+}
+
 .table td,
 .table th {
   border-bottom: .05rem solid #dadee4;
@@ -761,6 +768,11 @@ html:lang(ko),
 
 .btn.btn-clear::before {
   content: "\2715";
+}
+
+.btn svg {
+  margin-left: 0.25rem;
+  margin-right: 0.25rem;
 }
 
 .btn-group {

@@ -1,0 +1,10 @@
+.Settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 2rem;
+
+  button {
+    margin-bottom: 1rem;
+  }
+}

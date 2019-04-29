@@ -2385,6 +2385,8 @@ exports.analysePage = analysePage;
 exports.analysePageOutline = analysePageOutline;
 exports.onAuth = onAuth;
 exports.addRecentTask = addRecentTask;
+exports.updateBlacklist = updateBlacklist;
+exports.updateWhitelist = updateWhitelist;
 
 function makeRequest(type, uri, data) {
   return new Promise(function (resolve, reject) {
@@ -2446,6 +2448,18 @@ function addRecentTask(protagonistID, description, categories) {
     categories: categories
   });
 }
+
+function updateBlacklist(protagonistID, blacklist) {
+  return makeRequest("POST", "http://localhost:5000/protagonist/".concat(protagonistID, "/blacklist"), {
+    blacklist: blacklist
+  });
+}
+
+function updateWhitelist(protagonistID, whitelist) {
+  return makeRequest("POST", "http://localhost:5000/protagonist/".concat(protagonistID, "/whitelist"), {
+    whitelist: whitelist
+  });
+}
 },{}],"actions/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -2457,6 +2471,11 @@ exports.updateTaskCategories = updateTaskCategories;
 exports.setTask = setTask;
 exports.updateRoute = updateRoute;
 exports.addToBlacklist = addToBlacklist;
+exports.removeFromBlacklist = removeFromBlacklist;
+exports.setBlacklist = setBlacklist;
+exports.addToWhitelist = addToWhitelist;
+exports.removeFromWhitelist = removeFromWhitelist;
+exports.setWhitelist = setWhitelist;
 exports.updateCategoriesLoading = updateCategoriesLoading;
 exports.pause = pause;
 exports.play = play;
@@ -2464,7 +2483,8 @@ exports.onAuth = onAuth;
 exports.setProtagonist = setProtagonist;
 exports.setRecentTasks = setRecentTasks;
 exports.addRecentTask = addRecentTask;
-exports.ADD_RECENT_TASK = exports.SET_RECENT_TASKS = exports.ON_AUTH = exports.SET_PROTAGONIST = exports.PLAY = exports.PAUSE = exports.UPDATE_CATEGORIES_LOADING = exports.ADD_TO_BLACKLIST = exports.UPDATE_ROUTE = exports.SET_TASK = exports.UPDATE_TASK_CATEGORIES = exports.UPDATE_TASK_DESCRIPTION = void 0;
+exports.deleteAccount = deleteAccount;
+exports.DELETE_ACCOUNT = exports.ADD_RECENT_TASK = exports.SET_RECENT_TASKS = exports.ON_AUTH = exports.SET_PROTAGONIST = exports.PLAY = exports.PAUSE = exports.UPDATE_CATEGORIES_LOADING = exports.SET_WHITELIST = exports.REMOVE_FROM_WHITELIST = exports.ADD_TO_WHITELIST = exports.SET_BLACKLIST = exports.REMOVE_FROM_BLACKLIST = exports.ADD_TO_BLACKLIST = exports.UPDATE_ROUTE = exports.SET_TASK = exports.UPDATE_TASK_CATEGORIES = exports.UPDATE_TASK_DESCRIPTION = void 0;
 
 var api = _interopRequireWildcard(require("../api/api.js"));
 
@@ -2480,6 +2500,16 @@ var UPDATE_ROUTE = "UPDATE_ROUTE";
 exports.UPDATE_ROUTE = UPDATE_ROUTE;
 var ADD_TO_BLACKLIST = "ADD_TO_BLACKLIST";
 exports.ADD_TO_BLACKLIST = ADD_TO_BLACKLIST;
+var REMOVE_FROM_BLACKLIST = "REMOVE_FROM_BLACKLIST";
+exports.REMOVE_FROM_BLACKLIST = REMOVE_FROM_BLACKLIST;
+var SET_BLACKLIST = "SET_BLACKLIST";
+exports.SET_BLACKLIST = SET_BLACKLIST;
+var ADD_TO_WHITELIST = "ADD_TO_WHITELIST";
+exports.ADD_TO_WHITELIST = ADD_TO_WHITELIST;
+var REMOVE_FROM_WHITELIST = "REMOVE_FROM_WHITELIST";
+exports.REMOVE_FROM_WHITELIST = REMOVE_FROM_WHITELIST;
+var SET_WHITELIST = "SET_WHITELIST";
+exports.SET_WHITELIST = SET_WHITELIST;
 var UPDATE_CATEGORIES_LOADING = "UPDATE_CATEGORIES_LOADING";
 exports.UPDATE_CATEGORIES_LOADING = UPDATE_CATEGORIES_LOADING;
 var PAUSE = "PAUSE";
@@ -2494,6 +2524,8 @@ var SET_RECENT_TASKS = "SET_RECENT_TASKS";
 exports.SET_RECENT_TASKS = SET_RECENT_TASKS;
 var ADD_RECENT_TASK = "ADD_RECENT_TASK";
 exports.ADD_RECENT_TASK = ADD_RECENT_TASK;
+var DELETE_ACCOUNT = "DELETE_ACCOUNT";
+exports.DELETE_ACCOUNT = DELETE_ACCOUNT;
 
 function updateTaskDescription(description) {
   return {
@@ -2527,6 +2559,41 @@ function addToBlacklist(site) {
   return {
     type: ADD_TO_BLACKLIST,
     site: site
+  };
+}
+
+function removeFromBlacklist(index) {
+  return {
+    type: REMOVE_FROM_BLACKLIST,
+    index: index
+  };
+}
+
+function setBlacklist(blacklist) {
+  return {
+    type: SET_BLACKLIST,
+    blacklist: blacklist
+  };
+}
+
+function addToWhitelist(site) {
+  return {
+    type: ADD_TO_WHITELIST,
+    site: site
+  };
+}
+
+function removeFromWhitelist(index) {
+  return {
+    type: REMOVE_FROM_WHITELIST,
+    index: index
+  };
+}
+
+function setWhitelist(whitelist) {
+  return {
+    type: SET_WHITELIST,
+    whitelist: whitelist
   };
 }
 
@@ -2573,6 +2640,13 @@ function addRecentTask(task) {
   return {
     type: ADD_RECENT_TASK,
     task: task
+  };
+}
+
+function deleteAccount(protagonistID) {
+  return {
+    type: DELETE_ACCOUNT,
+    protagonistID: protagonistID
   };
 }
 },{"../api/api.js":"api/api.js"}],"../node_modules/underscore/underscore.js":[function(require,module,exports) {
@@ -4386,24 +4460,45 @@ function _setStateToDB() {
   _setStateToDB = _asyncToGenerator(
   /*#__PURE__*/
   regeneratorRuntime.mark(function _callee3(state, stateDiff) {
-    var protagonist, _stateDiff$recentTask, description, categories, originalTask;
+    var protagonist, blacklist, whitelist, _stateDiff$recentTask, description, categories, originalTask, areBlacklistsEquivalent, areWhitelistsEquivalent;
 
     return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
             // Update task if the categories have changed
-            protagonist = state.protagonist;
-            _stateDiff$recentTask = stateDiff.recentTasks[0], description = _stateDiff$recentTask.description, categories = _stateDiff$recentTask.categories;
-            originalTask = state.recentTasks.find(function (task) {
-              return task.description === description;
-            });
+            protagonist = state.protagonist, blacklist = state.blacklist, whitelist = state.whitelist;
 
-            if (_.difference(categories, originalTask.categories).length) {
-              (0, _api.addRecentTask)(protagonist.id, description, categories);
+            if (stateDiff.recentTasks.length) {
+              _stateDiff$recentTask = stateDiff.recentTasks[0], description = _stateDiff$recentTask.description, categories = _stateDiff$recentTask.categories;
+              originalTask = state.recentTasks.find(function (task) {
+                return task.description === description;
+              });
+
+              if (_.difference(categories, originalTask.categories).length) {
+                (0, _api.addRecentTask)(protagonist.id, description, categories);
+              }
+            } // Update blacklist if it has changed
+
+
+            areBlacklistsEquivalent = blacklist.every(function (url) {
+              return stateDiff.blacklist.includes(url);
+            }) && blacklist.length === stateDiff.blacklist.length;
+
+            if (!areBlacklistsEquivalent) {
+              (0, _api.updateBlacklist)(protagonist.id, stateDiff.blacklist);
+            } // Update whitelist if it has changed
+
+
+            areWhitelistsEquivalent = whitelist.every(function (url) {
+              return stateDiff.whitelist.includes(url);
+            }) && whitelist.length === stateDiff.whitelist.length;
+
+            if (!areWhitelistsEquivalent) {
+              (0, _api.updateWhitelist)(protagonist.id, stateDiff.whitelist);
             }
 
-          case 4:
+          case 6:
           case "end":
             return _context3.stop();
         }
@@ -4411,6 +4506,30 @@ function _setStateToDB() {
     }, _callee3);
   }));
   return _setStateToDB.apply(this, arguments);
+}
+
+function getStateFromDB() {
+  return _getStateFromDB.apply(this, arguments);
+}
+
+function _getStateFromDB() {
+  _getStateFromDB = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee4() {
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            return _context4.abrupt("return", Promise.resolve({}));
+
+          case 1:
+          case "end":
+            return _context4.stop();
+        }
+      }
+    }, _callee4);
+  }));
+  return _getStateFromDB.apply(this, arguments);
 }
 },{"underscore":"../node_modules/underscore/underscore.js","../api/api.js":"api/api.js"}],"background/aliases.js":[function(require,module,exports) {
 "use strict";
@@ -4438,8 +4557,10 @@ function setTask(originalAction) {
         updateTaskCategories = actions.updateTaskCategories,
         updateRoute = actions.updateRoute,
         updateCategoriesLoading = actions.updateCategoriesLoading,
-        addRecentTask = actions.addRecentTask;
+        addRecentTask = actions.addRecentTask,
+        play = actions.play;
     var description = originalAction.description;
+    dispatch(play());
     dispatch(updateTaskDescription(description));
 
     try {
@@ -4465,7 +4586,10 @@ function setTask(originalAction) {
 }
 
 function onAuth(originalAction) {
-  var setProtagonist = actions.setProtagonist;
+  var setProtagonist = actions.setProtagonist,
+      setRecentTasks = actions.setRecentTasks,
+      setBlacklist = actions.setBlacklist,
+      setWhitelist = actions.setWhitelist;
   return function (dispatch) {
     return chrome.identity.getAuthToken({
       interactive: true
@@ -4485,15 +4609,23 @@ function onAuth(originalAction) {
         var email = data.email,
             name = data.name,
             locale = data.locale;
-        var protagonist = {
+        var protagonistToInsert = {
           email: email,
           name: name,
           locale: locale
         };
-        api.onAuth(protagonist).then(function (stateFromDB) {
+        api.onAuth(protagonistToInsert).then(function (stateFromDB) {
+          // Update state with info in the DB
           (0, _storage.setStateToChromeStorage)(stateFromDB);
           (0, _storage.setStateToLocalStorage)(stateFromDB);
+          var protagonist = stateFromDB.protagonist,
+              blacklist = stateFromDB.blacklist,
+              whitelist = stateFromDB.whitelist,
+              recentTasks = stateFromDB.recentTasks;
           dispatch(setProtagonist(protagonist));
+          dispatch(setBlacklist(blacklist));
+          dispatch(setWhitelist(whitelist));
+          dispatch(setRecentTasks(recentTasks));
         }).catch(function (err) {
           console.log(err); // do something with error
         });
@@ -4595,6 +4727,45 @@ function blacklist() {
     case _actions.ADD_TO_BLACKLIST:
       return state.concat(action.site);
 
+    case _actions.REMOVE_FROM_BLACKLIST:
+      return state.filter(function (site, i) {
+        return i !== action.index;
+      });
+
+    case _actions.SET_BLACKLIST:
+      return action.blacklist;
+
+    default:
+      return state;
+  }
+}
+},{"../actions/":"actions/index.js"}],"reducers/whitelist.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = whitelist;
+
+var _actions = require("../actions/");
+
+function whitelist() {
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var action = arguments.length > 1 ? arguments[1] : undefined;
+  if (typeof state === "undefined") return [];
+
+  switch (action.type) {
+    case _actions.ADD_TO_WHITELIST:
+      return state.concat(action.site);
+
+    case _actions.REMOVE_FROM_WHITELIST:
+      return state.filter(function (site, i) {
+        return i !== action.index;
+      });
+
+    case _actions.SET_WHITELIST:
+      return action.whitelist;
+
     default:
       return state;
   }
@@ -4633,9 +4804,9 @@ exports.default = isPaused;
 var _actions = require("../actions/");
 
 function isPaused() {
-  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
   var action = arguments.length > 1 ? arguments[1] : undefined;
-  if (typeof state === "undefined") return state;
+  if (typeof state === "undefined") return true;
 
   switch (action.type) {
     case _actions.PAUSE:
@@ -4692,7 +4863,9 @@ function recentTasks() {
 
   switch (action.type) {
     case _actions.SET_RECENT_TASKS:
-      return action.tasks;
+      return _.uniq(action.tasks, true, function (task) {
+        return task.description;
+      });
 
     case _actions.ADD_RECENT_TASK:
       return _.uniq([action.task].concat(state), true, function (task) {
@@ -4721,6 +4894,8 @@ var _route = _interopRequireDefault(require("./route"));
 
 var _blacklist = _interopRequireDefault(require("./blacklist"));
 
+var _whitelist = _interopRequireDefault(require("./whitelist"));
+
 var _categoriesLoading = _interopRequireDefault(require("./categoriesLoading"));
 
 var _isPaused = _interopRequireDefault(require("./isPaused"));
@@ -4736,6 +4911,7 @@ var deepmodeApp = (0, _redux.combineReducers)({
   taskCategories: _taskCategories.default,
   route: _route.default,
   blacklist: _blacklist.default,
+  whitelist: _whitelist.default,
   categoriesLoading: _categoriesLoading.default,
   isPaused: _isPaused.default,
   protagonist: _protagonist.default,
@@ -4743,7 +4919,7 @@ var deepmodeApp = (0, _redux.combineReducers)({
 });
 var _default = deepmodeApp;
 exports.default = _default;
-},{"redux":"../node_modules/redux/es/redux.js","./taskDescription":"reducers/taskDescription.js","./taskCategories":"reducers/taskCategories.js","./route":"reducers/route.js","./blacklist":"reducers/blacklist.js","./categoriesLoading":"reducers/categoriesLoading.js","./isPaused":"reducers/isPaused.js","./protagonist":"reducers/protagonist.js","./recentTasks":"reducers/recentTasks.js"}],"background/store.js":[function(require,module,exports) {
+},{"redux":"../node_modules/redux/es/redux.js","./taskDescription":"reducers/taskDescription.js","./taskCategories":"reducers/taskCategories.js","./route":"reducers/route.js","./blacklist":"reducers/blacklist.js","./whitelist":"reducers/whitelist.js","./categoriesLoading":"reducers/categoriesLoading.js","./isPaused":"reducers/isPaused.js","./protagonist":"reducers/protagonist.js","./recentTasks":"reducers/recentTasks.js"}],"background/store.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -32715,6 +32891,29 @@ exports.default = extractDomainNameWithoutTLD;
 function extractDomainNameWithoutTLD(url) {
   return url.split("//")[1].replace("www.", "").split(".").slice(-2, -1)[0];
 }
+},{}],"helpers/urls.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.isUrlInBlacklist = isUrlInBlacklist;
+exports.isUrlInWhitelist = isUrlInWhitelist;
+
+/*
+  Helper functions for dealing with URLs
+*/
+function isUrlInBlacklist(blacklist, url) {
+  return blacklist.some(function (bUrl) {
+    return url.includes(bUrl);
+  });
+}
+
+function isUrlInWhitelist(whitelist, url) {
+  return whitelist.some(function (wUrl) {
+    return url.includes(wUrl);
+  });
+}
 },{}],"background/tabWatch.js":[function(require,module,exports) {
 "use strict";
 
@@ -32726,34 +32925,47 @@ var _api = require("../api/api.js");
 
 var _extractDomain = _interopRequireDefault(require("../helpers/extractDomain"));
 
+var _urls = require("../helpers/urls");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var isFirstLoad = true;
 
+function blacklistBlock(tabId) {
+  return chrome.tabs.sendMessage(tabId, {
+    type: "blacklist"
+  });
+}
+
 function noMatch(tabId) {
-  chrome.tabs.sendMessage(tabId, {
+  return chrome.tabs.sendMessage(tabId, {
     type: "topic_match",
     match: false
   });
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  var title = tab.title,
+      url = tab.url,
+      domainName = (0, _extractDomain.default)(tab.url);
+
   var _store$getState = _store.default.getState(),
       taskCategories = _store$getState.taskCategories,
       elem = _store$getState.elem,
       blacklist = _store$getState.blacklist,
+      whitelist = _store$getState.whitelist,
       isPaused = _store$getState.isPaused;
 
-  if (isPaused) return; // Make sure API call only fires once on tab update
+  if (isPaused) return;
+  if (url.includes("chrome://")) return;
+  if (url.includes(".google.")) return; // No need to call API for sites on the whitelist
+
+  if ((0, _urls.isUrlInWhitelist)(whitelist, url)) return; // No need to call API for known blocked sites
+
+  if ((0, _urls.isUrlInBlacklist)(blacklist, url)) return; // Make sure API call only fires once on tab update
 
   if (changeInfo.status === "loading" && isFirstLoad) {
     isFirstLoad = false;
-    var title = tab.title,
-        url = tab.url,
-        domainName = (0, _extractDomain.default)(tab.url);
-    if (url === "chrome://newtab/") return; // No need to call API for known blocked sites
-
-    if (blacklist.includes(url)) return noMatch(tabId);
 
     if (taskCategories.length > 0) {
       return _mercuryParser.default.parse(url).then(function (result) {
@@ -32768,7 +32980,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     isFirstLoad = true;
   }
 });
-},{"./store.js":"background/store.js","@postlight/mercury-parser":"../node_modules/@postlight/mercury-parser/dist/mercury.js","../api/api.js":"api/api.js","../helpers/extractDomain":"helpers/extractDomain.js"}],"background/index.js":[function(require,module,exports) {
+},{"./store.js":"background/store.js","@postlight/mercury-parser":"../node_modules/@postlight/mercury-parser/dist/mercury.js","../api/api.js":"api/api.js","../helpers/extractDomain":"helpers/extractDomain.js","../helpers/urls":"helpers/urls.js"}],"background/index.js":[function(require,module,exports) {
 "use strict";
 
 var _store = _interopRequireDefault(require("./store.js"));
@@ -32806,7 +33018,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34347" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45269" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

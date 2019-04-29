@@ -28619,6 +28619,8 @@ exports.analysePage = analysePage;
 exports.analysePageOutline = analysePageOutline;
 exports.onAuth = onAuth;
 exports.addRecentTask = addRecentTask;
+exports.updateBlacklist = updateBlacklist;
+exports.updateWhitelist = updateWhitelist;
 
 function makeRequest(type, uri, data) {
   return new Promise(function (resolve, reject) {
@@ -28680,6 +28682,18 @@ function addRecentTask(protagonistID, description, categories) {
     categories: categories
   });
 }
+
+function updateBlacklist(protagonistID, blacklist) {
+  return makeRequest("POST", "http://localhost:5000/protagonist/".concat(protagonistID, "/blacklist"), {
+    blacklist: blacklist
+  });
+}
+
+function updateWhitelist(protagonistID, whitelist) {
+  return makeRequest("POST", "http://localhost:5000/protagonist/".concat(protagonistID, "/whitelist"), {
+    whitelist: whitelist
+  });
+}
 },{}],"actions/index.js":[function(require,module,exports) {
 "use strict";
 
@@ -28691,6 +28705,11 @@ exports.updateTaskCategories = updateTaskCategories;
 exports.setTask = setTask;
 exports.updateRoute = updateRoute;
 exports.addToBlacklist = addToBlacklist;
+exports.removeFromBlacklist = removeFromBlacklist;
+exports.setBlacklist = setBlacklist;
+exports.addToWhitelist = addToWhitelist;
+exports.removeFromWhitelist = removeFromWhitelist;
+exports.setWhitelist = setWhitelist;
 exports.updateCategoriesLoading = updateCategoriesLoading;
 exports.pause = pause;
 exports.play = play;
@@ -28698,7 +28717,8 @@ exports.onAuth = onAuth;
 exports.setProtagonist = setProtagonist;
 exports.setRecentTasks = setRecentTasks;
 exports.addRecentTask = addRecentTask;
-exports.ADD_RECENT_TASK = exports.SET_RECENT_TASKS = exports.ON_AUTH = exports.SET_PROTAGONIST = exports.PLAY = exports.PAUSE = exports.UPDATE_CATEGORIES_LOADING = exports.ADD_TO_BLACKLIST = exports.UPDATE_ROUTE = exports.SET_TASK = exports.UPDATE_TASK_CATEGORIES = exports.UPDATE_TASK_DESCRIPTION = void 0;
+exports.deleteAccount = deleteAccount;
+exports.DELETE_ACCOUNT = exports.ADD_RECENT_TASK = exports.SET_RECENT_TASKS = exports.ON_AUTH = exports.SET_PROTAGONIST = exports.PLAY = exports.PAUSE = exports.UPDATE_CATEGORIES_LOADING = exports.SET_WHITELIST = exports.REMOVE_FROM_WHITELIST = exports.ADD_TO_WHITELIST = exports.SET_BLACKLIST = exports.REMOVE_FROM_BLACKLIST = exports.ADD_TO_BLACKLIST = exports.UPDATE_ROUTE = exports.SET_TASK = exports.UPDATE_TASK_CATEGORIES = exports.UPDATE_TASK_DESCRIPTION = void 0;
 
 var api = _interopRequireWildcard(require("../api/api.js"));
 
@@ -28714,6 +28734,16 @@ var UPDATE_ROUTE = "UPDATE_ROUTE";
 exports.UPDATE_ROUTE = UPDATE_ROUTE;
 var ADD_TO_BLACKLIST = "ADD_TO_BLACKLIST";
 exports.ADD_TO_BLACKLIST = ADD_TO_BLACKLIST;
+var REMOVE_FROM_BLACKLIST = "REMOVE_FROM_BLACKLIST";
+exports.REMOVE_FROM_BLACKLIST = REMOVE_FROM_BLACKLIST;
+var SET_BLACKLIST = "SET_BLACKLIST";
+exports.SET_BLACKLIST = SET_BLACKLIST;
+var ADD_TO_WHITELIST = "ADD_TO_WHITELIST";
+exports.ADD_TO_WHITELIST = ADD_TO_WHITELIST;
+var REMOVE_FROM_WHITELIST = "REMOVE_FROM_WHITELIST";
+exports.REMOVE_FROM_WHITELIST = REMOVE_FROM_WHITELIST;
+var SET_WHITELIST = "SET_WHITELIST";
+exports.SET_WHITELIST = SET_WHITELIST;
 var UPDATE_CATEGORIES_LOADING = "UPDATE_CATEGORIES_LOADING";
 exports.UPDATE_CATEGORIES_LOADING = UPDATE_CATEGORIES_LOADING;
 var PAUSE = "PAUSE";
@@ -28728,6 +28758,8 @@ var SET_RECENT_TASKS = "SET_RECENT_TASKS";
 exports.SET_RECENT_TASKS = SET_RECENT_TASKS;
 var ADD_RECENT_TASK = "ADD_RECENT_TASK";
 exports.ADD_RECENT_TASK = ADD_RECENT_TASK;
+var DELETE_ACCOUNT = "DELETE_ACCOUNT";
+exports.DELETE_ACCOUNT = DELETE_ACCOUNT;
 
 function updateTaskDescription(description) {
   return {
@@ -28761,6 +28793,41 @@ function addToBlacklist(site) {
   return {
     type: ADD_TO_BLACKLIST,
     site: site
+  };
+}
+
+function removeFromBlacklist(index) {
+  return {
+    type: REMOVE_FROM_BLACKLIST,
+    index: index
+  };
+}
+
+function setBlacklist(blacklist) {
+  return {
+    type: SET_BLACKLIST,
+    blacklist: blacklist
+  };
+}
+
+function addToWhitelist(site) {
+  return {
+    type: ADD_TO_WHITELIST,
+    site: site
+  };
+}
+
+function removeFromWhitelist(index) {
+  return {
+    type: REMOVE_FROM_WHITELIST,
+    index: index
+  };
+}
+
+function setWhitelist(whitelist) {
+  return {
+    type: SET_WHITELIST,
+    whitelist: whitelist
   };
 }
 
@@ -28809,6 +28876,13 @@ function addRecentTask(task) {
     task: task
   };
 }
+
+function deleteAccount(protagonistID) {
+  return {
+    type: DELETE_ACCOUNT,
+    protagonistID: protagonistID
+  };
+}
 },{"../api/api.js":"api/api.js"}],"components/Logo.js":[function(require,module,exports) {
 "use strict";
 
@@ -28854,7 +28928,8 @@ function (_React$Component) {
     key: "render",
     value: function render() {
       return _react.default.createElement("div", {
-        className: "Logo"
+        className: "Logo",
+        onClick: this.props.onClick
       }, _react.default.createElement("img", {
         src: "/images/icon_32.png",
         alt: "Deep Mode Icon"
@@ -29031,6 +29106,39 @@ var IoIosGear = function IoIosGear(props) {
 
 exports.default = IoIosGear;
 module.exports = exports['default'];
+},{"react":"../node_modules/react/index.js","react-icon-base":"../node_modules/react-icon-base/lib/index.js"}],"../node_modules/react-icons/lib/io/clipboard.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactIconBase = require('react-icon-base');
+
+var _reactIconBase2 = _interopRequireDefault(_reactIconBase);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var IoClipboard = function IoClipboard(props) {
+    return _react2.default.createElement(
+        _reactIconBase2.default,
+        _extends({ viewBox: '0 0 40 40' }, props),
+        _react2.default.createElement(
+            'g',
+            null,
+            _react2.default.createElement('path', { d: 'm12.3 12.5c0.1-1.6 0.7-2.7 2.1-3.1l0.1-0.1c1-0.2 1.7-0.5 1.7-1.6v-1.6c0-2 1.6-3.6 3.6-3.6s3.5 1.6 3.5 3.6v1.6c0 1 0.7 1.4 1.7 1.7h0.1c1.4 0.4 2 1.5 2.2 3.1h-15z m7.5-7.5c-0.7 0-1.1 0.5-1.1 1.1s0.4 1.1 1.1 1.1 1-0.5 1-1.1-0.4-1.1-1-1.1z m11.6 0c1.2 0 2.1 0.9 2.1 2.2v28.1c0 1.3-0.9 2.2-2.1 2.2h-23.2c-1.2 0-2.2-0.9-2.2-2.2v-28.1c0-1.3 1-2.2 2.2-2.2h5.7v1c0 0.9-0.7 1.5-1.5 1.5h-2.9c-0.5 0-0.9 0.5-0.9 1v25.6c0 0.4 0.4 0.9 0.8 0.9h20.7c0.5 0 0.9-0.5 0.9-0.9v-25.6c0-0.5-0.4-1-0.9-1h-2.9c-0.8 0-1.6-0.6-1.6-1.5v-1h5.8z m-20.4 12.5v-2.5h8.8v2.5h-8.8z m0 15v-2.5h12.5v2.5h-12.5z m0-5v-2.5h10.1v2.5h-10.1z m0-5v-2.5h16.3v2.5h-16.3z' })
+        )
+    );
+};
+
+exports.default = IoClipboard;
+module.exports = exports['default'];
 },{"react":"../node_modules/react/index.js","react-icon-base":"../node_modules/react-icon-base/lib/index.js"}],"components/PopupHeader.js":[function(require,module,exports) {
 "use strict";
 
@@ -29048,6 +29156,8 @@ var _iosPause = _interopRequireDefault(require("react-icons/lib/io/ios-pause"));
 var _iosPlay = _interopRequireDefault(require("react-icons/lib/io/ios-play"));
 
 var _iosGear = _interopRequireDefault(require("react-icons/lib/io/ios-gear"));
+
+var _clipboard = _interopRequireDefault(require("react-icons/lib/io/clipboard"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29087,10 +29197,14 @@ function (_React$Component) {
           isPaused = _this$props.isPaused,
           pause = _this$props.pause,
           play = _this$props.play,
-          protagonist = _this$props.protagonist;
+          protagonist = _this$props.protagonist,
+          updateRoute = _this$props.updateRoute,
+          onTask = _this$props.onTask;
       return _react.default.createElement("header", {
         className: protagonist ? "PopupHeader" : "d-none"
-      }, _react.default.createElement(_Logo.default, null), _react.default.createElement("div", null, _react.default.createElement(_iosPause.default, {
+      }, _react.default.createElement(_Logo.default, {
+        onClick: updateRoute.bind(this, "/")
+      }), _react.default.createElement("div", null, _react.default.createElement(_iosPause.default, {
         size: "25",
         onClick: pause.bind(this),
         className: isPaused ? "d-none" : ""
@@ -29098,6 +29212,14 @@ function (_React$Component) {
         size: "25",
         onClick: play.bind(this),
         className: isPaused ? "" : "d-none"
+      }), _react.default.createElement(_clipboard.default, {
+        size: "25",
+        onClick: function onClick() {
+          return onTask ? updateRoute("/task") : updateRoute("/");
+        }
+      }), _react.default.createElement(_iosGear.default, {
+        size: "25",
+        onClick: updateRoute.bind(this, "/settings")
       })));
     }
   }]);
@@ -29107,7 +29229,7 @@ function (_React$Component) {
 
 var _default = PopupHeader;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","./Logo":"components/Logo.js","react-icons/lib/io/ios-pause":"../node_modules/react-icons/lib/io/ios-pause.js","react-icons/lib/io/ios-play":"../node_modules/react-icons/lib/io/ios-play.js","react-icons/lib/io/ios-gear":"../node_modules/react-icons/lib/io/ios-gear.js"}],"containers/PopupHeaderContainer.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./Logo":"components/Logo.js","react-icons/lib/io/ios-pause":"../node_modules/react-icons/lib/io/ios-pause.js","react-icons/lib/io/ios-play":"../node_modules/react-icons/lib/io/ios-play.js","react-icons/lib/io/ios-gear":"../node_modules/react-icons/lib/io/ios-gear.js","react-icons/lib/io/clipboard":"../node_modules/react-icons/lib/io/clipboard.js"}],"containers/PopupHeaderContainer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29126,7 +29248,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var mapStateToProps = function mapStateToProps(state) {
   return {
     isPaused: state.isPaused,
-    protagonist: state.protagonist
+    protagonist: state.protagonist,
+    onTask: !!state.taskDescription
   };
 };
 
@@ -29137,6 +29260,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     play: function play() {
       return dispatch((0, _actions.play)());
+    },
+    updateRoute: function updateRoute(route) {
+      return dispatch((0, _actions.updateRoute)(route));
     }
   };
 };
@@ -32288,7 +32414,9 @@ function (_React$Component) {
           updateTaskDescription = _this$props.updateTaskDescription,
           updateTaskCategories = _this$props.updateTaskCategories,
           updateRoute = _this$props.updateRoute,
-          addRecentTask = _this$props.addRecentTask;
+          addRecentTask = _this$props.addRecentTask,
+          play = _this$props.play;
+      play();
       updateTaskDescription(description);
       updateTaskCategories(categories);
       updateRoute("/task");
@@ -32384,6 +32512,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     addRecentTask: function addRecentTask(task) {
       return dispatch((0, _actions.addRecentTask)(task));
+    },
+    play: function play() {
+      return dispatch((0, _actions.play)());
     }
   };
 };
@@ -63937,7 +64068,462 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 var OnTaskContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_OnTask.default);
 var _default = OnTaskContainer;
 exports.default = _default;
-},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/OnTask":"components/OnTask.js"}],"components/Popup.js":[function(require,module,exports) {
+},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/OnTask":"components/OnTask.js"}],"../node_modules/react-icons/lib/ti/cancel.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactIconBase = require('react-icon-base');
+
+var _reactIconBase2 = _interopRequireDefault(_reactIconBase);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TiCancel = function TiCancel(props) {
+    return _react2.default.createElement(
+        _reactIconBase2.default,
+        _extends({ viewBox: '0 0 40 40' }, props),
+        _react2.default.createElement(
+            'g',
+            null,
+            _react2.default.createElement('path', { d: 'm20 6.7c-7.4 0-13.3 6-13.3 13.3s6 13.3 13.3 13.3 13.3-5.9 13.3-13.3-5.9-13.3-13.3-13.3z m-8.3 13.3c0-1.4 0.3-2.7 0.9-3.8l11.2 11.2c-1.1 0.6-2.4 0.9-3.8 0.9-4.6 0-8.3-3.7-8.3-8.3z m15.7 3.8l-11.2-11.2c1.1-0.6 2.4-0.9 3.8-0.9 4.6 0 8.3 3.7 8.3 8.3 0 1.4-0.3 2.7-0.9 3.8z' })
+        )
+    );
+};
+
+exports.default = TiCancel;
+module.exports = exports['default'];
+},{"react":"../node_modules/react/index.js","react-icon-base":"../node_modules/react-icon-base/lib/index.js"}],"../node_modules/react-icons/lib/ti/thumbs-up.js":[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactIconBase = require('react-icon-base');
+
+var _reactIconBase2 = _interopRequireDefault(_reactIconBase);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TiThumbsUp = function TiThumbsUp(props) {
+    return _react2.default.createElement(
+        _reactIconBase2.default,
+        _extends({ viewBox: '0 0 40 40' }, props),
+        _react2.default.createElement(
+            'g',
+            null,
+            _react2.default.createElement('path', { d: 'm32.6 14.5c-0.6-0.3-4.2-0.7-6.5-1 0.4-2.1 0.6-4 0.6-6 0-2.3-1.9-4.2-4.2-4.2s-4.2 1.9-4.2 4.2c0 3.1-1.1 4.6-2.7 6.2-0.9-1.2-2.3-2-3.9-2-2.8 0-5 2.2-5 5v10c0 2.7 2.2 5 5 5 1.2 0 2.4-0.5 3.2-1.3 0.1 0.1 0.2 0.2 0.4 0.3 1.6 1.3 6.1 2.6 9.7 2.6 3.1 0 4.3-0.5 5.4-0.9 0.2-0.1 0.4-0.1 0.6-0.2 1.3-0.5 2.6-2 2.8-3.7l1.2-9.9c0.2-1.7-0.8-3.6-2.4-4.1z m-20.9 13.8c-1 0-1.7-0.7-1.7-1.6v-10c0-1 0.7-1.7 1.7-1.7s1.6 0.7 1.6 1.7v10c0 0.9-0.7 1.6-1.6 1.6z m18.8-0.2c0 0.4-0.4 0.9-0.7 1-0.2 0.1-0.4 0.1-0.6 0.2-0.9 0.4-1.7 0.7-4.2 0.7-3.2 0-6.9-1.3-7.7-1.9-0.3-0.2-0.6-1-0.6-1.4v-8.3c0-0.1 0.1-1.1 1.1-2.2 1.6-1.5 3.9-3.8 3.9-8.7 0-0.5 0.3-0.8 0.8-0.8s0.8 0.3 0.8 0.8c0 2.3-0.2 4.5-0.8 7.2l-0.5 2.3 2.2-0.3c1 0 6.6 0.7 7.3 0.9 0.1 0 0.2 0.3 0.1 0.5l-1.1 10z' })
+        )
+    );
+};
+
+exports.default = TiThumbsUp;
+module.exports = exports['default'];
+},{"react":"../node_modules/react/index.js","react-icon-base":"../node_modules/react-icon-base/lib/index.js"}],"components/Settings.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _cancel = _interopRequireDefault(require("react-icons/lib/ti/cancel"));
+
+var _thumbsUp = _interopRequireDefault(require("react-icons/lib/ti/thumbs-up"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Settings =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Settings, _React$Component);
+
+  function Settings() {
+    _classCallCheck(this, Settings);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(Settings).apply(this, arguments));
+  }
+
+  _createClass(Settings, [{
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          updateRoute = _this$props.updateRoute,
+          deleteAccount = _this$props.deleteAccount;
+      return _react.default.createElement("div", {
+        className: "Settings"
+      }, _react.default.createElement("h6", null, "Edit blacklist:"), _react.default.createElement("button", {
+        className: "btn",
+        onClick: updateRoute.bind(this, "/blacklist")
+      }, _react.default.createElement(_cancel.default, {
+        size: "25"
+      }), "Edit blacklist"), _react.default.createElement("h6", null, "Edit whitelist:"), _react.default.createElement("button", {
+        className: "btn",
+        onClick: updateRoute.bind(this, "/whitelist")
+      }, _react.default.createElement(_thumbsUp.default, {
+        size: "25"
+      }), "Edit whitelist"), _react.default.createElement("h6", null, "Delete Account:"), _react.default.createElement("button", {
+        className: "btn btn-error"
+      }, "Delete"));
+    }
+  }]);
+
+  return Settings;
+}(_react.default.Component);
+
+Settings.propTypes = {};
+var _default = Settings;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-icons/lib/ti/cancel":"../node_modules/react-icons/lib/ti/cancel.js","react-icons/lib/ti/thumbs-up":"../node_modules/react-icons/lib/ti/thumbs-up.js"}],"containers/SettingsContainer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _reactRedux = require("react-redux");
+
+var _actions = require("../actions");
+
+var _Settings = _interopRequireDefault(require("../components/Settings"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    protagonist: state.protagonist
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    deleteAccount: function deleteAccount(protagonistID) {
+      return dispatch((0, _actions.deleteAccount)(protagonistID));
+    },
+    updateRoute: function updateRoute(route) {
+      return dispatch((0, _actions.updateRoute)(route));
+    }
+  };
+};
+
+var SettingsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Settings.default);
+var _default = SettingsContainer;
+exports.default = _default;
+},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/Settings":"components/Settings.js"}],"components/Blacklist.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _iosCloseEmpty = _interopRequireDefault(require("react-icons/lib/io/ios-close-empty"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Blacklist =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Blacklist, _React$Component);
+
+  function Blacklist(props) {
+    var _this;
+
+    _classCallCheck(this, Blacklist);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Blacklist).call(this, props));
+    _this.urlInputRef = _react.default.createRef();
+    _this.handleEnter = _this.handleEnter.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Blacklist, [{
+    key: "handleEnter",
+    value: function handleEnter(e) {
+      var url = e.target.value;
+
+      if (e.key === "Enter" && url.length >= 4) {
+        this.props.addToBlacklist(url);
+        this.urlInputRef.current.value = "";
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          blacklist = _this$props.blacklist,
+          removeFromBlacklist = _this$props.removeFromBlacklist;
+      var blacklistDisplay = blacklist.length ? _react.default.createElement("table", {
+        className: "table table-striped table-hover table-scroll-v"
+      }, _react.default.createElement("tbody", null, blacklist.map(function (url, i) {
+        return _react.default.createElement("tr", {
+          key: i
+        }, _react.default.createElement("td", {
+          className: "url"
+        }, url), _react.default.createElement("td", {
+          className: "remove-url"
+        }, _react.default.createElement(_iosCloseEmpty.default, {
+          size: "25",
+          onClick: removeFromBlacklist.bind(this, i)
+        })));
+      }))) : _react.default.createElement("p", {
+        className: "empty-blacklist text-center"
+      }, "No URLs on the blacklist yet, try adding one above");
+      return _react.default.createElement("div", {
+        className: "Blacklist"
+      }, _react.default.createElement("h5", null, "Blacklist"), _react.default.createElement("label", null, _react.default.createElement("h6", {
+        className: "text-center"
+      }, "Add URL"), _react.default.createElement("input", {
+        ref: this.urlInputRef,
+        className: "form-input",
+        placeholder: "e.g. facebook.com",
+        type: "url",
+        onKeyDown: this.handleEnter
+      })), blacklistDisplay);
+    }
+  }]);
+
+  return Blacklist;
+}(_react.default.Component);
+
+Blacklist.propTypes = {};
+var _default = Blacklist;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-icons/lib/io/ios-close-empty":"../node_modules/react-icons/lib/io/ios-close-empty.js"}],"containers/BlacklistContainer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _reactRedux = require("react-redux");
+
+var _actions = require("../actions");
+
+var _Blacklist = _interopRequireDefault(require("../components/Blacklist"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    blacklist: state.blacklist
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    addToBlacklist: function addToBlacklist(site) {
+      return dispatch((0, _actions.addToBlacklist)(site));
+    },
+    removeFromBlacklist: function removeFromBlacklist(index) {
+      return dispatch((0, _actions.removeFromBlacklist)(index));
+    }
+  };
+};
+
+var BlacklistContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Blacklist.default);
+var _default = BlacklistContainer;
+exports.default = _default;
+},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/Blacklist":"components/Blacklist.js"}],"components/Whitelist.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _iosCloseEmpty = _interopRequireDefault(require("react-icons/lib/io/ios-close-empty"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Whitelist =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(Whitelist, _React$Component);
+
+  function Whitelist(props) {
+    var _this;
+
+    _classCallCheck(this, Whitelist);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Whitelist).call(this, props));
+    _this.urlInputRef = _react.default.createRef();
+    _this.handleEnter = _this.handleEnter.bind(_assertThisInitialized(_this));
+    return _this;
+  }
+
+  _createClass(Whitelist, [{
+    key: "handleEnter",
+    value: function handleEnter(e) {
+      var url = e.target.value;
+
+      if (e.key === "Enter" && url.length >= 4) {
+        this.props.addToWhitelist(url);
+        this.urlInputRef.current.value = "";
+      }
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this$props = this.props,
+          whitelist = _this$props.whitelist,
+          removeFromWhitelist = _this$props.removeFromWhitelist;
+      var whitelistDisplay = whitelist.length ? _react.default.createElement("table", {
+        className: "table table-striped table-hover table-scroll-v"
+      }, _react.default.createElement("tbody", null, whitelist.map(function (url, i) {
+        return _react.default.createElement("tr", {
+          key: i
+        }, _react.default.createElement("td", {
+          className: "url"
+        }, url), _react.default.createElement("td", {
+          className: "remove-url"
+        }, _react.default.createElement(_iosCloseEmpty.default, {
+          size: "25",
+          onClick: removeFromWhitelist.bind(this, i)
+        })));
+      }))) : _react.default.createElement("p", {
+        className: "empty-whitelist text-center"
+      }, "No URLs on the whitelist yet, try adding one above");
+      return _react.default.createElement("div", {
+        className: "Whitelist"
+      }, _react.default.createElement("h5", null, "Whitelist"), _react.default.createElement("p", null, "Add URLs that are always OK to access while working to your whitelist."), _react.default.createElement("label", null, _react.default.createElement("h6", {
+        className: "text-center"
+      }, "Add URL"), _react.default.createElement("input", {
+        ref: this.urlInputRef,
+        className: "form-input",
+        placeholder: "e.g. dropbox.com",
+        type: "url",
+        onKeyDown: this.handleEnter
+      })), whitelistDisplay);
+    }
+  }]);
+
+  return Whitelist;
+}(_react.default.Component);
+
+Whitelist.propTypes = {};
+var _default = Whitelist;
+exports.default = _default;
+},{"react":"../node_modules/react/index.js","react-icons/lib/io/ios-close-empty":"../node_modules/react-icons/lib/io/ios-close-empty.js"}],"containers/WhitelistContainer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+var _reactRedux = require("react-redux");
+
+var _actions = require("../actions");
+
+var _Whitelist = _interopRequireDefault(require("../components/Whitelist"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    whitelist: state.whitelist
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    addToWhitelist: function addToWhitelist(site) {
+      return dispatch((0, _actions.addToWhitelist)(site));
+    },
+    removeFromWhitelist: function removeFromWhitelist(index) {
+      return dispatch((0, _actions.removeFromWhitelist)(index));
+    }
+  };
+};
+
+var WhitelistContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Whitelist.default);
+var _default = WhitelistContainer;
+exports.default = _default;
+},{"react-redux":"../node_modules/react-redux/es/index.js","../actions":"actions/index.js","../components/Whitelist":"components/Whitelist.js"}],"components/Popup.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -63954,6 +64540,12 @@ var _AuthContainer = _interopRequireDefault(require("../containers/AuthContainer
 var _SetTaskContainer = _interopRequireDefault(require("../containers/SetTaskContainer"));
 
 var _OnTaskContainer = _interopRequireDefault(require("../containers/OnTaskContainer"));
+
+var _SettingsContainer = _interopRequireDefault(require("../containers/SettingsContainer"));
+
+var _BlacklistContainer = _interopRequireDefault(require("../containers/BlacklistContainer"));
+
+var _WhitelistContainer = _interopRequireDefault(require("../containers/WhitelistContainer"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -63991,8 +64583,8 @@ function (_React$Component) {
     value: function componentDidMount() {
       var _this$props = this.props,
           taskDescription = _this$props.taskDescription,
-          updateRoute = _this$props.updateRoute;
-      if (taskDescription) return updateRoute("/task");
+          updateRoute = _this$props.updateRoute; // if (taskDescription)
+      //   return updateRoute("/task");
     }
   }, {
     key: "render",
@@ -64001,7 +64593,7 @@ function (_React$Component) {
           route = _this$props2.route,
           protagonist = _this$props2.protagonist;
       var result = null;
-      if (!protagonist) result = _react.default.createElement(_AuthContainer.default, null);else if (route === "/") result = _react.default.createElement(_SetTaskContainer.default, null);else if (route === "/task") result = _react.default.createElement(_OnTaskContainer.default, null);
+      if (!protagonist) result = _react.default.createElement(_AuthContainer.default, null);else if (route === "/") result = _react.default.createElement(_SetTaskContainer.default, null);else if (route === "/task") result = _react.default.createElement(_OnTaskContainer.default, null);else if (route === "/settings") result = _react.default.createElement(_SettingsContainer.default, null);else if (route === "/blacklist") result = _react.default.createElement(_BlacklistContainer.default, null);else if (route === "/whitelist") result = _react.default.createElement(_WhitelistContainer.default, null);
       return _react.default.createElement("div", {
         className: "Popup"
       }, _react.default.createElement(_PopupHeaderContainer.default, null), result);
@@ -64013,7 +64605,7 @@ function (_React$Component) {
 
 var _default = Popup;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js","../containers/PopupHeaderContainer":"containers/PopupHeaderContainer.js","../containers/AuthContainer":"containers/AuthContainer.js","../containers/SetTaskContainer":"containers/SetTaskContainer.js","../containers/OnTaskContainer":"containers/OnTaskContainer.js"}],"containers/PopupContainer.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","../containers/PopupHeaderContainer":"containers/PopupHeaderContainer.js","../containers/AuthContainer":"containers/AuthContainer.js","../containers/SetTaskContainer":"containers/SetTaskContainer.js","../containers/OnTaskContainer":"containers/OnTaskContainer.js","../containers/SettingsContainer":"containers/SettingsContainer.js","../containers/BlacklistContainer":"containers/BlacklistContainer.js","../containers/WhitelistContainer":"containers/WhitelistContainer.js"}],"containers/PopupContainer.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -65620,7 +66212,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34347" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "45269" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

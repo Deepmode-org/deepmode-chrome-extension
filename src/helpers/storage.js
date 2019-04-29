@@ -3,7 +3,7 @@
 */
 
 import * as _ from "underscore";
-import { addRecentTask } from "../api/api.js";
+import { addRecentTask, updateBlacklist, updateWhitelist } from "../api/api.js";
 
 // Takes an object with zero or more properties of state that require long term storage
 // and merges and syncs the changes
@@ -56,10 +56,35 @@ export function setStateToLocalStorage(state) {
 
 async function setStateToDB(state, stateDiff) {
   // Update task if the categories have changed
-  let { protagonist } = state;
-  let { description, categories } = stateDiff.recentTasks[0];
-  let originalTask = state.recentTasks.find(task => task.description === description);
-  if (_.difference(categories, originalTask.categories).length) {
-    addRecentTask(protagonist.id, description, categories);
+  let { protagonist, blacklist, whitelist } = state;
+
+  if (stateDiff.recentTasks.length) {
+    let { description, categories } = stateDiff.recentTasks[0];
+    let originalTask = state.recentTasks.find(task => task.description === description);
+    if (_.difference(categories, originalTask.categories).length) {
+      addRecentTask(protagonist.id, description, categories);
+    }
   }
+
+  // Update blacklist if it has changed
+  let areBlacklistsEquivalent = blacklist.every(function(url) {
+    return stateDiff.blacklist.includes(url);
+  }) && (blacklist.length === stateDiff.blacklist.length);
+
+  if (!areBlacklistsEquivalent) {
+    updateBlacklist(protagonist.id, stateDiff.blacklist);
+  }
+
+  // Update whitelist if it has changed
+  let areWhitelistsEquivalent = whitelist.every(function(url) {
+    return stateDiff.whitelist.includes(url);
+  }) && (whitelist.length === stateDiff.whitelist.length);
+
+  if (!areWhitelistsEquivalent) {
+    updateWhitelist(protagonist.id, stateDiff.whitelist);
+  }
+}
+
+async function getStateFromDB() {
+  return Promise.resolve({});
 }

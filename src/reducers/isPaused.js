@@ -1,8 +1,8 @@
 import { PAUSE, PLAY } from "../actions/";
 
-export default function isPaused(state = false, action) {
+export default function isPaused(state = true, action) {
   if (typeof state === "undefined")
-    return state;
+    return true;
 
   switch (action.type) {
     case PAUSE:
