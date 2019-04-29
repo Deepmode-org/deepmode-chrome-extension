@@ -5,7 +5,7 @@
 function onRecieve(msg) {
   switch (msg.type) {
     case "close_current_tab":
-      return chrome.tabs.query({ active: true }, function(tabs) {
+      return chrome.tabs.query({ currentWindow: true, active: true }, function(tabs) {
         if (tabs.length)
           return chrome.tabs.remove(tabs[0].id);
       });
