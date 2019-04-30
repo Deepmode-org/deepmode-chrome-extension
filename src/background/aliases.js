@@ -37,6 +37,11 @@ function onAuth(originalAction) {
   const { setProtagonist, setRecentTasks, setBlacklist, setWhitelist } = actions;
   return function(dispatch) {
     return chrome.identity.getAuthToken({ interactive: true }, function(token) {
+      // Return if there was an error
+      if (!token) {
+        return;
+      }
+      
       let params = {
         method: "GET",
         async: true,
@@ -80,9 +85,14 @@ function signOut(originalAction) {
   const { unsetProtagonist } = actions;
   return function(dispatch) {
     return chrome.identity.getAuthToken(function(token) {
-      return chrome.identity.removeCachedAuthToken({ token }, function() {
+      if (token) {
+        return chrome.identity.removeCachedAuthToken({ token }, function() {
+          dispatch(unsetProtagonist());
+        });
+      } else {
+        // If there was an error, remove protagonist from state anyway
         dispatch(unsetProtagonist());
-      });
+      }
     })
   }
 }
