@@ -11,13 +11,13 @@ export default function recentTasks(state = [], action) {
         action.tasks,
         true,
         task => task.description
-      );
+      ).slice(0, 3);
     case ADD_RECENT_TASK:
       return _.uniq(
         [action.task].concat(state),
         true,
         task => task.description
-      );
+      ).slice(0, 3);
     default:
       return state;
   }
