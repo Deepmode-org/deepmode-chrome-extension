@@ -6,9 +6,35 @@
   padding: 5px 10px;
   width: 100%;
 
-  svg {
-    color: #5F27CD;
-    cursor: pointer;
-    margin-left: 0.5rem;
+  .Logo {
+    span {
+      font-size: 0.8rem;
+    }
+  }
+
+  .nav-icons {
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
+
+    .nav-icon {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 1rem;
+
+      svg {
+        color: #5F27CD;
+        cursor: pointer;
+      }
+
+      span {
+        font-size: 0.5rem;
+        font-weight: bold;
+        margin-top: 0.1rem;
+        text-transform: uppercase;
+      }
+    }
   }
 }

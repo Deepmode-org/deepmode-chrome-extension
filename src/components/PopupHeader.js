@@ -11,11 +11,23 @@ class PopupHeader extends React.Component {
     return (
       <header className={protagonist ? "PopupHeader" : "d-none" }>
         <Logo onClick={updateRoute.bind(this, "/")} />
-        <div>
-          <IoIosPause size="25" onClick={pause.bind(this)} className={isPaused ? "d-none" : ""} />
-          <IoIosPlay size="25" onClick={play.bind(this)} className={isPaused ? "" : "d-none"} />
-          <IoClipboard size="25" onClick={() => onTask ? updateRoute("/task") : updateRoute("/")} />
-          <IoIosGear size="25" onClick={updateRoute.bind(this, "/settings")} />
+        <div className="nav-icons">
+          <div className={isPaused ? "d-none" : "nav-icon"}>
+            <IoIosPause size="25" onClick={pause.bind(this)} />
+            <span>Pause</span>
+          </div>
+          <div className={isPaused ? "nav-icon" : "d-none"}>
+            <IoIosPlay size="25" onClick={play.bind(this)} />
+            <span>Run</span>
+          </div>
+          <div className="nav-icon">
+            <IoClipboard size="25" onClick={() => onTask ? updateRoute("/task") : updateRoute("/")} />
+            <span>Task</span>
+          </div>
+          <div className="nav-icon">
+            <IoIosGear size="25" onClick={updateRoute.bind(this, "/settings")} />
+            <span>Settings</span>
+          </div>
         </div>
       </header>
     );
