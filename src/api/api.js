@@ -23,7 +23,7 @@ export function makeRequest(type, uri, data) {
 }
 
 export function checkMatch(currentCategories, newTitle, newHTML) {
-  return makeRequest("POST", "https://deepmode-api.herokuapp.com/match", {
+  return makeRequest("POST", "https://api.deepmode.app/match", {
     currentCategories: currentCategories,
     title: newTitle,
     html: newHTML
@@ -34,7 +34,7 @@ export function getCategorySetForTask(taskDescription) {
   return makeRequest(
     "GET",
     encodeURI(
-      "https://deepmode-api.herokuapp.com/categorySet?task_description=" +
+      "https://api.deepmode.app/categorySet?task_description=" +
       taskDescription
     )
   );
@@ -44,7 +44,7 @@ export function parseArticle(url) {
   return makeRequest(
     "GET",
     encodeURI(
-      "https://deepmode-api.herokuapp.com/parse?url=" + url
+      "https://api.deepmode.app/parse?url=" + url
     )
   );
 }
@@ -66,7 +66,7 @@ export function analysePageOutline(url) {
 export function onAuth(protagonist) {
   return makeRequest(
     "POST",
-    "https://deepmode-api.herokuapp.com/auth",
+    "https://api.deepmode.app/auth",
     protagonist
   );
 }
@@ -74,7 +74,7 @@ export function onAuth(protagonist) {
 export function addRecentTask(protagonistID, description, categories) {
   return makeRequest(
     "POST",
-    "https://deepmode-api.herokuapp.com/task",
+    "https://api.deepmode.app/task",
     { protagonistID, description, categories }
   );
 }
@@ -82,7 +82,7 @@ export function addRecentTask(protagonistID, description, categories) {
 export function updateBlacklist(protagonistID, blacklist) {
   return makeRequest(
     "POST",
-    `https://deepmode-api.herokuapp.com/protagonist/${protagonistID}/blacklist`,
+    `https://api.deepmode.app/protagonist/${protagonistID}/blacklist`,
     { blacklist }
   );
 }
@@ -90,7 +90,7 @@ export function updateBlacklist(protagonistID, blacklist) {
 export function updateWhitelist(protagonistID, whitelist) {
   return makeRequest(
     "POST",
-    `https://deepmode-api.herokuapp.com/protagonist/${protagonistID}/whitelist`,
+    `https://api.deepmode.app/protagonist/${protagonistID}/whitelist`,
     { whitelist }
   );
 }
