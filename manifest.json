@@ -1,6 +1,7 @@
 {
   "name": "Deepmode - Intelligent website blocker",
-  "version": "0.11",
+  "short_name": "Deepmode",
+  "version": "0.13.1",
   "description": "Stay on task, online",
   "permissions": ["identity", "activeTab", "tabs", "storage"],
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
@@ -32,12 +33,11 @@
     "128": "images/icon_128.png"
   },
   "oauth2": {
-    "client_id": "471502441995-vojtv32sakhrounlkk13np20cknr9pr2.apps.googleusercontent.com",
+    "client_id": "771123873717-n2t8o3mmdr3vh49m710eo30oc3o3tif0.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile"
     ]
   },
-  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk+wl4vVh6FcFsrIWT33ikGjC5jmUvvJjBqkVRweRocyIsTOh/e/KC9XUDGjrvIK7qv0JlhsHyVxehVSepBQSViSNWGcEtGWqQ/Ak4pwZg11ih/J9FM/4bwcUhB0bv8bA21McLWOt2G5WmcjaJw5hsco+HcuCzz3Tw8YCmqk7K4vlHiMCwSdjunvKKa162dGsIIx+qxNjpCEM1v0eO/cCnu2smHjIzwPTHNFkYWU0GLXZ79HV5rmBW52qJyNULBhRD1xw470UTFV04h0nV5N5Y1lANzvzhSQNDUk8eOptdemM15cCGSOpMS+sFAw2wG+Q5SkTU8mWiQh0tA0JqMbf9wIDAQAB",
   "manifest_version": 2
 }
