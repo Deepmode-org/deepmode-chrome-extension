@@ -44,7 +44,12 @@ class Blacklist extends React.Component {
         <h5>Blacklist</h5>
         <label>
           <h6 className="text-center">Add URL</h6>
-          <input ref={this.urlInputRef} className="form-input" placeholder="e.g. facebook.com" type="url" onKeyDown={this.handleEnter} />
+          <input
+            ref={this.urlInputRef}
+            className="form-input"
+            placeholder="e.g. facebook.com"
+            type="url"
+            onKeyDown={this.handleEnter} />
         </label>
         {blacklistDisplay}
       </div>
