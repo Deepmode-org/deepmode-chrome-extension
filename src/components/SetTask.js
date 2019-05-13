@@ -7,12 +7,20 @@ class SetTask extends React.Component {
     super(props);
     this.taskInputRef = React.createRef();
     this.setTask = this.setTask.bind(this);
+    this.handleEnter = this.handleEnter.bind(this);
     this.returnToRecentTask = this.returnToRecentTask.bind(this);
   }
 
   setTask(taskDescription) {
     if (taskDescription.length > 0)
       return this.props.setTask(taskDescription);
+  }
+
+  handleEnter(e) {
+    if (e.key === "Enter") {
+      const taskDescription = this.taskInputRef.current.value;
+      this.setTask(taskDescription);
+    }
   }
 
   returnToRecentTask(description, categories) {
@@ -47,12 +55,12 @@ class SetTask extends React.Component {
             className="form-input"
             type="text"
             name="task"
-            placeholder="Brief task description" />
+            placeholder="Brief task description"
+            onKeyDown={this.handleEnter} />
           <button className="btn" onClick={(e) => this.setTask(this.taskInputRef.current.value)}>
             Set Task
           </button>
         </div>
-        <div className="divider"></div>
         <div className={recentTasks.length ? "previous-tasks" : "d-none"}>
           <h6>Return to a previous task</h6>
           <ul>
