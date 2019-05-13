@@ -4,7 +4,7 @@
   "description": "Intelligent distraction blocker",
   "main": "index.js",
   "scripts": {
-    "build": "parcel build src/content_scripts/index.js src/background/index.js src/popup/popup.js",
+    "build": "parcel build src/content_scripts/index.js src/background/index.js src/popup/popup.js --no-source-maps",
     "watch": "parcel watch src/content_scripts/index.js src/background/index.js src/popup/popup.js"
   },
   "author": "Emile <emilepw@hotmail.co.uk>",
