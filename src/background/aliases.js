@@ -34,9 +34,12 @@ function setTask(originalAction) {
 }
 
 function onAuth(originalAction) {
-  const { setProtagonist, setRecentTasks, setBlacklist, setWhitelist } = actions;
+  const { setProtagonist, setRecentTasks, setBlacklist, setWhitelist, updateAuthLoading } = actions;
   return function(dispatch) {
     return chrome.identity.getAuthToken({ interactive: true }, function(token) {
+      // Show loading icon
+      dispatch(updateAuthLoading(true));
+      
       // Return if there was an error
       if (!token) {
         return;
@@ -67,13 +70,15 @@ function onAuth(originalAction) {
           setStateToLocalStorage(stateFromDB);
 
           const { protagonist, blacklist, whitelist, recentTasks } = stateFromDB;
-          
+
+          dispatch(updateAuthLoading(false));
           dispatch(setProtagonist(protagonist));
           dispatch(setBlacklist(blacklist));
           dispatch(setWhitelist(whitelist));
           dispatch(setRecentTasks(recentTasks));
         }).catch(function(err) {
           console.log(err);
+          dispatch(updateAuthLoading(false));
           // do something with error
         });
       });

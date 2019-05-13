@@ -19,6 +19,7 @@ export const SIGN_OUT = "SIGN_OUT";
 export const SET_RECENT_TASKS = "SET_RECENT_TASKS";
 export const ADD_RECENT_TASK = "ADD_RECENT_TASK";
 export const DELETE_ACCOUNT = "DELETE_ACCOUNT";
+export const UPDATE_AUTH_LOADING = "UPDATE_AUTH_LOADING";
 
 export function updateTaskDescription(description) {
   return {
@@ -152,5 +153,12 @@ export function deleteAccount(protagonistID) {
   return {
     type: DELETE_ACCOUNT,
     protagonistID
+  };
+}
+
+export function updateAuthLoading(loading) {
+  return {
+    type: UPDATE_AUTH_LOADING,
+    loading
   };
 }

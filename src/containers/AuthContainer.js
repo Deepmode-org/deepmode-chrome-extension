@@ -4,7 +4,8 @@ import Auth from '../components/Auth';
 
 const mapStateToProps = (state) => {
   return {
-    protagonist: state.protagonist
+    protagonist: state.protagonist,
+    authLoading: state.authLoading
   };
 }
 

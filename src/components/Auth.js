@@ -13,6 +13,7 @@ class Auth extends React.Component {
   }
 
   render() {
+    const { authLoading } = this.props;
     return (
       <div className="Auth">
         <Logo light />
@@ -23,12 +24,13 @@ class Auth extends React.Component {
           <p className="text-light text-center">
             Deepmode recognises and blocks every distraction, keeping you mindful and productive
           </p>
-          <button className="btn" onClick={this.authWithGoogle}>
+          <button className={authLoading ? "d-none" : "btn"} onClick={this.authWithGoogle}>
             Authenticate with Google
             <div>
               <img width="22" src="/images/google-icon.png" alt="Google Icon" />
             </div>
           </button>
+          <div className={authLoading ? "loading loading-lg": "d-none"}></div>
         </div>
       </div>
     );
