@@ -3,6 +3,7 @@ import Mercury from "@postlight/mercury-parser";
 import { checkMatch } from "../api/api.js";
 import extractDomainNameWithoutTLD from "../helpers/extractDomain";
 import { isUrlInBlacklist, isUrlInWhitelist } from "../helpers/urls";
+import { filterTempCache } from "../actions/";
 
 let isFirstLoad = true;
 
@@ -18,7 +19,9 @@ function noMatch(tabId) {
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   let title = tab.title, url = tab.url, domainName = extractDomainNameWithoutTLD(tab.url);
-  let { taskCategories, elem, blacklist, whitelist, isPaused } = store.getState();
+  let { taskCategories, elem, blacklist, whitelist, isPaused, tempCache } = store.getState();
+
+  store.dispatch(filterTempCache());
 
   if (isPaused)
     return;
@@ -27,6 +30,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
       return;
 
   if (url.includes(".google."))
+    return;
+
+  if (!!tempCache.find(cacheItem => url.includes(cacheItem.url)))
     return;
 
   // No need to call API for sites on the whitelist

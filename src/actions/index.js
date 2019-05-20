@@ -20,6 +20,8 @@ export const SET_RECENT_TASKS = "SET_RECENT_TASKS";
 export const ADD_RECENT_TASK = "ADD_RECENT_TASK";
 export const DELETE_ACCOUNT = "DELETE_ACCOUNT";
 export const UPDATE_AUTH_LOADING = "UPDATE_AUTH_LOADING";
+export const ADD_TO_TEMP_CACHE = "ADD_TO_TEMP_CACHE";
+export const FILTER_TEMP_CACHE = "FILTER_TEMP_CACHE";
 
 export function updateTaskDescription(description) {
   return {
@@ -160,5 +162,18 @@ export function updateAuthLoading(loading) {
   return {
     type: UPDATE_AUTH_LOADING,
     loading
+  };
+}
+
+export function addToTempCache(url) {
+  return {
+    type: ADD_TO_TEMP_CACHE,
+    url
+  };
+}
+
+export function filterTempCache() {
+  return {
+    type: FILTER_TEMP_CACHE
   };
 }

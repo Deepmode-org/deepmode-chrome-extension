@@ -33,3 +33,7 @@ export function initMsgListeners(store) {
 export function closeCurrentTab() {
   return sendMessage("close_current_tab");
 }
+
+export function addToTempCache(url) {
+  return sendMessage("add_to_temp_cache", { url });
+}

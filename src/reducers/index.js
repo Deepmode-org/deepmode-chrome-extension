@@ -9,6 +9,7 @@ import isPaused from "./isPaused";
 import protagonist from "./protagonist";
 import recentTasks from "./recentTasks";
 import authLoading from "./authLoading";
+import tempCache from "./tempCache";
 
 const deepmodeApp = combineReducers({
   taskDescription,
@@ -20,7 +21,8 @@ const deepmodeApp = combineReducers({
   isPaused,
   protagonist,
   recentTasks,
-  authLoading
+  authLoading,
+  tempCache
 });
 
 export default deepmodeApp;

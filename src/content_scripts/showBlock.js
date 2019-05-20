@@ -1,4 +1,4 @@
-import { closeCurrentTab } from "./messaging.js";
+import { closeCurrentTab, addToTempCache } from "./messaging.js";
 
 export default function showBlock(window, document, { type, taskDescription}) {
   let blockInner;
@@ -49,6 +49,10 @@ export default function showBlock(window, document, { type, taskDescription}) {
     deepmodeRootElem.style.display = "block";
     document.getElementById("deepmode-allow-tab").addEventListener("click", function() {
       deepmodeRootElem.style.display = "none";
+
+      // Add a url to a temporary cache once the user has confirmed that the page is OK to view
+      // This prevents repeated warnings on a series of URL updates, e.g. navigating to a YT video
+      addToTempCache(window.location.hostname);
     });
     document.getElementById("deepmode-close-tab").addEventListener("click", closeCurrentTab);
   } else if (type === "blacklist") {
