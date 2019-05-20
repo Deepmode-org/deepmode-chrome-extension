@@ -1,4 +1,13 @@
 import { analysePageOutline } from "../api/api.js";
+import insertCSS from "./insertCSS";
+import { closeCurrentTab } from "./messaging";
+
+
+function isDistractingSidebar(element) {
+  // Function to return an estimate of whether an element is a distracting sidebar
+  // Done by looking at height and width of element relative to page, number of links and number of images
+
+}
 
 function isNotArticle(url) {
   return [
@@ -19,7 +28,7 @@ function isNotArticle(url) {
   }).length > 0;
 }
 
-export default function articleParse(window, document) {
+export function articleParse(window, document) {
 
   if (isNotArticle(window.location.href))
     return;
@@ -28,14 +37,6 @@ export default function articleParse(window, document) {
 
   let mo = new MutationObserver(articlePreparations);
   mo.observe(document.documentElement, { childList: true, subtree: true });
-
-  var deepmodePrepareElem = document.createElement("div");
-  deepmodePrepareElem.id = "deepmode-prepare";
-  deepmodePrepareElem.innerHTML = "<p>Take a deep breath and remember why you came to this article</p>";
-
-  setTimeout(function() {
-    deepmodePrepareElem.style.display = "none";
-  }, 5000);
 
   function articlePreparations(mutations) {
     for (let i = 0; i < mutations.length; i++) {
@@ -46,7 +47,7 @@ export default function articleParse(window, document) {
         }
 
         if (nodes[j].tagName === "BODY" && hasArticleTag) {
-          nodes[j].appendChild(deepmodePrepareElem);
+          nodes[j].style.visibility = "hidden";
         }
       }
     }
@@ -54,7 +55,7 @@ export default function articleParse(window, document) {
 
   document.addEventListener("DOMContentLoaded", (e) => {
     window.deepmode = window.deepmode || {};
-    window.deepmode.previousContent = document.body.innerHTML.replace(`<div id="deepmode-prepare"><p>Take a deep breath and remember why you came to this article</p></div>`, "");
+    window.deepmode.previousContent = document.body.innerHTML;
     mo.disconnect();
   });
 
@@ -63,37 +64,35 @@ export default function articleParse(window, document) {
       throw res;
 
     if (hasArticleTag && res.success) {
+      insertCSS("dist/styles/article.css");
+      setTimeout(() => document.body.style.visibility = "visible", 500);
+
       let { title, html } = res.data;
-      if (title && html) {  
+      if (title && html) {
         document.body.innerHTML =
-          `<div id='deepmode-cancel-article-view'>Close focused view</div>
-          <div id='deepmode-article-wrapper'>
+          `<div id="deepmode-cancel-article-view">Close focused view</div>
+          <div id="deepmode-article-wrapper">
             <main>
               <h1>${title}</h1>
               ${html}
             </main>
-          </div>
-          <div id="deepmode-prepare"><p>Take a deep breath and remember why you came to this article</p></div>`;
+            <div id="deepmode-end-of-article">Close article</div>
+          </div>`;
 
         document.getElementById("deepmode-cancel-article-view").addEventListener("click", function(e) {
           document.body.innerHTML = window.deepmode.previousContent;
         });
 
-        let node = document.getElementById("deepmode-prepare");
-        if (node.parentNode) {
-          node.parentNode.removeChild(node);
-        }
+        document.getElementById("deepmode-end-of-article").addEventListener("click", closeCurrentTab);
       }
     } else {
-      let node = document.getElementById("deepmode-prepare");
-      if (node.parentNode) {
-        node.parentNode.removeChild(node);
-      }
+      document.body.style.visibility = "visible"
     }
   }).catch(function(err) {
+    document.body.style.visibility = "visible";
     console.log(err);
     let node = document.getElementById("deepmode-prepare");
-    if (node.parentNode) {
+    if (node && node.parentNode) {
       node.parentNode.removeChild(node);
     }
   });

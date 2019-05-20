@@ -5,6 +5,7 @@ import bodyReady from "./bodyReady.js";
 import { Store } from "webext-redux";
 import showBlock from "./showBlock";
 import insertCSS from "./insertCSS";
+import { articleParse } from "./articleParse";
 
 const store = new Store({
   portName: "deepmode_bg_bridge"
@@ -28,3 +29,5 @@ Promise.all([bodyReady(document), store.ready()]).then(function(arr) {
 
 // Update UI of certain distracting sites
 updateUI(window.location.href);
+
+articleParse(window, document);
