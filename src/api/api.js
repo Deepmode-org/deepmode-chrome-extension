@@ -22,15 +22,17 @@ export function makeRequest(type, uri, data) {
   });
 }
 
-export function checkMatch(currentCategories, newTitle, newHTML) {
+export function checkMatch(currentCategories, currentConcepts, newHTML, url) {
+  console.log(currentConcepts);
   return makeRequest("POST", "https://api.deepmode.app/match", {
     currentCategories: currentCategories,
-    title: newTitle,
-    html: newHTML
+    currentConcepts: currentConcepts,
+    html: newHTML,
+    url: url
   });
 }
 
-export function getCategorySetForTask(taskDescription) {
+export function getDescriptorsForTask(taskDescription) {
   return makeRequest(
     "GET",
     encodeURI(
@@ -49,10 +51,10 @@ export function parseArticle(url) {
   );
 }
 
-export function analysePage(url) {
+export function analysePageDiffbot(url) {
   return makeRequest(
     "GET",
-    "https://api.diffbot.com/v3/analyze?token=5afe5c8cabb314a035a88f2c8cc6c16d&url=" + encodeURIComponent(url)
+    "https://api.diffbot.com/v3/analyze?token=83ad0367b282ced629edad1c918f92b6&url=" + encodeURIComponent(url)
   );
 }
 
@@ -71,11 +73,11 @@ export function onAuth(protagonist) {
   );
 }
 
-export function addRecentTask(protagonistID, description, categories) {
+export function addRecentTask(protagonistID, description, categories, concepts) {
   return makeRequest(
     "POST",
     "https://api.deepmode.app/task",
-    { protagonistID, description, categories }
+    { protagonistID, description, categories, concepts }
   );
 }
 

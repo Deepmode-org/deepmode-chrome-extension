@@ -8,6 +8,7 @@ function setTask(originalAction) {
     const {
       updateTaskDescription,
       updateTaskCategories,
+      updateTaskConcepts,
       updateRoute,
       updateCategoriesLoading,
       addRecentTask,
@@ -21,10 +22,13 @@ function setTask(originalAction) {
     try {
       dispatch(updateRoute("/task"));
       dispatch(updateCategoriesLoading(true));
-      api.getCategorySetForTask(description).then(function(categories) {
+      api.getDescriptorsForTask(description).then(function({ categories, concepts }) {
+        categories = categories.map(category => category.label);
+        concepts = concepts.map(concept => concept.text);
         dispatch(updateTaskCategories(categories));
+        dispatch(updateTaskConcepts(concepts));
         dispatch(updateCategoriesLoading(false));
-        dispatch(addRecentTask({ description, categories }));
+        dispatch(addRecentTask({ description, categories, concepts }));
         const { protagonist } = store.getState();
       });
     } catch (err) {

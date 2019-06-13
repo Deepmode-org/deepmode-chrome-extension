@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import taskDescription from "./taskDescription";
 import taskCategories from "./taskCategories";
+import taskConcepts from "./taskConcepts";
 import route from "./route";
 import blacklist from "./blacklist";
 import whitelist from "./whitelist";
@@ -14,6 +15,7 @@ import tempCache from "./tempCache";
 const deepmodeApp = combineReducers({
   taskDescription,
   taskCategories,
+  taskConcepts,
   route,
   blacklist,
   whitelist,

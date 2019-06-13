@@ -21,13 +21,16 @@ Promise.all([bodyReady(document), store.ready()]).then(function(arr) {
     body.appendChild(deepmodeRoot);
   }
 
+  let { isPaused } = store.getState();
+  if (!isPaused) {
+    // Update UI of certain distracting sites
+    updateUI(window.location.href);
+  }
+
   // Insert CSS for distraction block
   insertCSS("dist/content_scripts/index.css");
 
   initMsgListeners(store);
 });
 
-// Update UI of certain distracting sites
-updateUI(window.location.href);
-
-articleParse(window, document);
+// articleParse(window, document, store);

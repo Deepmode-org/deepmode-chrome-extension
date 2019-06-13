@@ -6,6 +6,7 @@ const mapStateToProps = (state) => {
   return {
     currentTaskDescription: state.taskDescription,
     currentTaskCategories: state.taskCategories,
+    currentTaskConcepts: state.taskConcepts,
     categoriesLoading: state.categoriesLoading
   };
 }

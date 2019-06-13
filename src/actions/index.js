@@ -1,6 +1,7 @@
 import * as api from "../api/api.js";
 export const UPDATE_TASK_DESCRIPTION = "UPDATE_TASK_DESCRIPTION";
 export const UPDATE_TASK_CATEGORIES = "UPDATE_TASK_CATEGORIES";
+export const UPDATE_TASK_CONCEPTS = "UPDATE_TASK_CONCEPTS";
 export const SET_TASK = "SET_TASK";
 export const UPDATE_ROUTE = "UPDATE_ROUTE";
 export const ADD_TO_BLACKLIST = "ADD_TO_BLACKLIST";
@@ -34,6 +35,13 @@ export function updateTaskCategories(categories) {
   return {
     type: UPDATE_TASK_CATEGORIES,
     categories
+  };
+}
+
+export function updateTaskConcepts(concepts) {
+  return {
+    type: UPDATE_TASK_CONCEPTS,
+    concepts
   };
 }
 

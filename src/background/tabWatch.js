@@ -19,7 +19,9 @@ function noMatch(tabId) {
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   let title = tab.title, url = tab.url, domainName = extractDomainNameWithoutTLD(tab.url);
-  let { taskCategories, elem, blacklist, whitelist, isPaused, tempCache } = store.getState();
+  let { taskCategories, taskConcepts, elem, blacklist, whitelist, isPaused, tempCache } = store.getState();
+
+  console.log(taskConcepts);
 
   store.dispatch(filterTempCache());
 
@@ -47,10 +49,10 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   if (changeInfo.status === "loading" && isFirstLoad) {
     isFirstLoad = false;
     
-    if (taskCategories.length > 0) {
+    if (taskCategories.length > 0 || taskConcepts.length > 0) {
       return Mercury.parse(url).then(function(result) {
-        let payload = `<h1>${result.title}</h1>${result.content}`;
-        checkMatch(taskCategories, null, payload).then(function(isMatch) {
+        let html = `<h1>${result.title}</h1>${result.content}`;
+        checkMatch(taskCategories, taskConcepts, html, url).then(function(isMatch) {
           // Send the match result to the content script
           if (!isMatch)
             return noMatch(tabId);

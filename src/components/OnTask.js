@@ -14,11 +14,12 @@ class Hit extends React.Component {
   }
 
   addCategory(newCategory) {
-    const { taskDescription, categories, updateTaskCategories, addRecentTask } = this.props;
+    const { taskDescription, categories, concepts, updateTaskCategories, addRecentTask } = this.props;
     const updatedCategories = categories.concat(newCategory);
     addRecentTask({
       description: taskDescription,
-      categories: updatedCategories
+      categories: updatedCategories,
+      concepts
     });
     return updateTaskCategories(updatedCategories);
   }
@@ -45,9 +46,9 @@ class OnTask extends React.Component {
   }
 
   removeCategory(i) {
-    const { currentTaskCategories, updateTaskCategories, currentTaskDescription, addRecentTask } = this.props;
+    const { currentTaskCategories, currentTaskConcepts, updateTaskCategories, currentTaskDescription, addRecentTask } = this.props;
     const categories = currentTaskCategories.filter((category, j) => j !== i);
-    addRecentTask({ description: currentTaskDescription, categories });
+    addRecentTask({ description: currentTaskDescription, categories, concepts: currentTaskConcepts });
     return updateTaskCategories(categories);
   }
 
@@ -55,6 +56,7 @@ class OnTask extends React.Component {
     const {
       currentTaskDescription,
       currentTaskCategories,
+      currentTaskConcepts,
       updateRoute,
       updateTaskCategories,
       categoriesLoading,
@@ -99,6 +101,7 @@ class OnTask extends React.Component {
               hitComponent={hit =>
                 <Hit
                   hit={hit}
+                  concepts={currentTaskConcepts}
                   categories={currentTaskCategories}
                   updateTaskCategories={updateTaskCategories}
                   taskDescription={currentTaskDescription}

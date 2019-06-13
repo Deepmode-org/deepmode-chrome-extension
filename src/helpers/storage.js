@@ -59,14 +59,14 @@ async function setStateToDB(state, stateDiff) {
   let { protagonist, blacklist, whitelist } = state;
 
   if (stateDiff.recentTasks.length) {
-    let { description, categories } = stateDiff.recentTasks[0];
+    let { description, categories, concepts } = stateDiff.recentTasks[0];
     let originalTask = state.recentTasks.find(task => task.description === description);
     if (_.difference(categories, originalTask.categories).length) {
       // Add task in DB if categories are adjusted
-      addRecentTask(protagonist.id, description, categories);
+      addRecentTask(protagonist.id, description, categories, concepts);
     } else if (stateDiff.recentTasks[0].description !== state.recentTasks[0].description) {
       // Add task in DB when a new task is started
-      addRecentTask(protagonist.id, description, categories);
+      addRecentTask(protagonist.id, description, categories, concepts);
     }
   }
 

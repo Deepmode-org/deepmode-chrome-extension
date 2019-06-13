@@ -23,13 +23,14 @@ class SetTask extends React.Component {
     }
   }
 
-  returnToRecentTask(description, categories) {
-    const { updateTaskDescription, updateTaskCategories, updateRoute, addRecentTask, play } = this.props;
+  returnToRecentTask(description, categories, concepts) {
+    const { updateTaskDescription, updateTaskCategories, updateTaskConcepts, updateRoute, addRecentTask, play } = this.props;
     play();
     updateTaskDescription(description);
     updateTaskCategories(categories);
+    updateTaskConcepts(concepts);
     updateRoute("/task");
-    addRecentTask({ description, categories });
+    addRecentTask({ description, categories, concepts });
   }
 
   render() {
@@ -39,7 +40,7 @@ class SetTask extends React.Component {
         <li
           key={i}
           className="previous-task"
-          onClick={(e) => this.returnToRecentTask(task.description, task.categories)}
+          onClick={(e) => this.returnToRecentTask(task.description, task.categories, task.concepts)}
         >
           <span>{task.description}</span>
           <IoIosArrowThinRight size={30} />
