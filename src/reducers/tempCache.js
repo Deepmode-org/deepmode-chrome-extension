@@ -4,8 +4,6 @@ export default function tempCache(state = [], action) {
   if (typeof state === "undefined")
     return [];
 
-  console.log(state);
-
   switch (action.type) {
     case ADD_TO_TEMP_CACHE:
       return state.concat({

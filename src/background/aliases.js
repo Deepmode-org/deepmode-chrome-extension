@@ -22,7 +22,8 @@ function setTask(originalAction) {
     try {
       dispatch(updateRoute("/task"));
       dispatch(updateCategoriesLoading(true));
-      api.getDescriptorsForTask(description).then(function({ categories, concepts }) {
+      api.getDescriptorsForTask(description).then(function(res) {
+        let { categories, concepts } = res;
         categories = categories.map(category => category.label);
         concepts = concepts.map(concept => concept.text);
         dispatch(updateTaskCategories(categories));

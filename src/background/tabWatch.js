@@ -21,8 +21,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   let title = tab.title, url = tab.url, domainName = extractDomainNameWithoutTLD(tab.url);
   let { taskCategories, taskConcepts, elem, blacklist, whitelist, isPaused, tempCache } = store.getState();
 
-  console.log(taskConcepts);
-
   store.dispatch(filterTempCache());
 
   if (isPaused)
